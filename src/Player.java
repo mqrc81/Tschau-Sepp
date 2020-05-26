@@ -22,10 +22,7 @@ public class Player {
         cards.add(c);
     }
 
-    public Card getCard(int x) {
-        return cards.get(x);
-    }
-
+    //FIXME
     public void removeCard(Card c) {
         cards.remove(c);
     }
