@@ -12,7 +12,7 @@ public class CardListener implements ActionListener {
     NewGame g;
     int p;
 
-    public CardListener(NewGame g, int p) {
+    public CardListener(MultiplayerGame g, int p) {
         this.g = g;
         this.p = p;
     }
@@ -20,24 +20,18 @@ public class CardListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (g.p == p) {
-            Card clicked = whatCard((JButton)ae.getSource());
-            Card played = whatCard(g.cardPlayedButton);
+            Card clicked = g.whatCard((JButton)ae.getSource());
+            Card played = g.whatCard(g.discardPileButton);
             if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
                 System.out.println("Correct Card");
-                g.cardPlayedButton.setIcon(g.img(clicked.getName(), 180, 270));
+                g.discardPileButton.setIcon(g.img(clicked.getName(), 180, 270));
                 g.players[p].removeCard(clicked);
                 g.nextPlayer();
             } else {
-                System.out.println("Wrong Card");
+                System.out.println("Error: Invalid Card");
             }
         } else {
-            System.out.println("Wrong Player");
+            System.out.println("Error: Wrong Player");
         }
-    }
-
-    public Card whatCard(JButton b) {
-        String desc = ((ImageIcon)b.getIcon()).getDescription();
-        String[] values = desc.split("_", 2);
-        return new Card(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
     }
 }

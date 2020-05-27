@@ -15,13 +15,13 @@ public abstract class NewGame extends JFrame {
     public final Player[] players = new Player[4];
 
     public int p = (int)(Math.random() * 4);
-    private int cardCounter = -1;
+    public int cardCounter = -1;
 
     public JPanel[] handPanel = new JPanel[4];
     public JLabel[] playerLabel = new JLabel[4];
-    public JButton tschauButton, seppButton, cardStackButton, cardPlayedButton;
+    public JButton tschauButton, seppButton, drawPileButton, discardPileButton;
 
-    private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, cardPlayedPanel, extraButtonsPanel;
+    private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, discardPilePanel, extraButtonsPanel;
 
     public final Color lightBlue = new Color(229, 244, 255);
     public final Color turquoise = new Color(0, 127, 127);
@@ -64,8 +64,8 @@ public abstract class NewGame extends JFrame {
         //
         extraButtonsPanel = new JPanel(new GridBagLayout());
         centerCenterPanel.add(createPanel(extraButtonsPanel, lightBlue, 820, 230), c(0, 1));
-        cardPlayedPanel = new JPanel(new GridBagLayout());
-        centerCenterPanel.add(createPanel(cardPlayedPanel, lightBlue, 820, 410), c(0, 0));
+        discardPilePanel = new JPanel(new GridBagLayout());
+        centerCenterPanel.add(createPanel(discardPilePanel, lightBlue, 820, 410), c(0, 0));
     }
 
     public void gui2() {
@@ -83,23 +83,23 @@ public abstract class NewGame extends JFrame {
         seppButton.setFocusable(false);
         extraButtonsPanel.add(seppButton, c(15, 100, 100, 0, 2, 0));
         //
-        cardStackButton = new JButton();
-        cardStackButton.setPreferredSize(new Dimension(90, 135));
-        cardStackButton.setBackground(lightBlue);
-        cardStackButton.setIcon(img(cardBack(), true, 90, 135));
-        cardStackButton.setMargin(new Insets(0, 0, 0, 0));
-        cardStackButton.setBorder(null);
-        cardStackButton.setFocusable(false);
-        extraButtonsPanel.add(cardStackButton, c(0, 85, 0, 0, 1, 0));
+        drawPileButton = new JButton();
+        drawPileButton.setPreferredSize(new Dimension(90, 135));
+        drawPileButton.setBackground(lightBlue);
+        drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+        drawPileButton.setMargin(new Insets(0, 0, 0, 0));
+        drawPileButton.setBorder(null);
+        drawPileButton.setFocusable(false);
+        extraButtonsPanel.add(drawPileButton, c(0, 85, 0, 0, 1, 0));
         //
-        cardPlayedButton = new JButton();
-        cardPlayedButton.setPreferredSize(new Dimension(180, 270));
-        cardPlayedButton.setBackground(lightBlue);
-        cardPlayedButton.setIcon(img(aCard().getName(), 180, 270));
-        cardPlayedButton.setMargin(new Insets(0, 0, 0, 0));
-        cardPlayedButton.setBorder(null);
-        cardPlayedButton.setFocusable(false);
-        cardPlayedPanel.add(cardPlayedButton, c(60, 60, 0, 0, 0, 0));
+        discardPileButton = new JButton();
+        discardPileButton.setPreferredSize(new Dimension(180, 270));
+        discardPileButton.setBackground(lightBlue);
+        discardPileButton.setIcon(img(aCard().getName(), 180, 270));
+        discardPileButton.setMargin(new Insets(0, 0, 0, 0));
+        discardPileButton.setBorder(null);
+        discardPileButton.setFocusable(false);
+        discardPilePanel.add(discardPileButton, c(60, 60, 0, 0, 0, 0));
         //
         for (int x = 0; x < 4; x++) {
             playerLabel[x] = new JLabel("Player " + (x + 1), SwingConstants.CENTER);
@@ -194,6 +194,12 @@ public abstract class NewGame extends JFrame {
         }
         System.out.println("Player " + (p + 1) + "'s turn");
         playerLabel[p].setBackground(green);
+    }
+
+    public Card whatCard(JButton b) {
+        String desc = ((ImageIcon)b.getIcon()).getDescription();
+        String[] values = desc.split("_", 2);
+        return new Card(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
     }
 
     public Card aCard() {

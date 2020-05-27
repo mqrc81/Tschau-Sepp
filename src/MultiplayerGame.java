@@ -12,6 +12,21 @@ public class MultiplayerGame extends NewGame {
 
     public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
+        drawPileButton.addActionListener(ae -> {
+            Card played = whatCard(discardPileButton);
+            if (!validCard(played)) {
+                players[p].addCard(aCard());
+                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+                updateHand(players[p].getCards(), p);
+                System.out.println("Card received");
+                if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
+                    nextPlayer();
+                }
+            } else {
+                System.out.println("Error: Player has valid Card");
+            }
+        });
+        //
         playerLabel[p].setBackground(green);
         System.out.println("Player " + (p + 1) + "'s turn");
     }
@@ -60,6 +75,17 @@ public class MultiplayerGame extends NewGame {
         //
         handPanel[player].revalidate();
         handPanel[player].repaint();
+    }
+
+    public boolean validCard(Card played) {
+        boolean valid = false;
+        for (Card c: players[p].getCards()) {
+            if (c.getSymbol() == played.getSymbol() || c.getNumber() == played.getNumber()) {
+                valid = true;
+                break;
+            }
+        }
+        return valid;
     }
 
     public ImageIcon img(String name) {

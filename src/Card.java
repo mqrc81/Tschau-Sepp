@@ -5,13 +5,12 @@
  */
 
 public class Card {
-    private int number; //11: Jack | 12: Queen | 13: King | 14: Ace
-    private int symbol; //1: Spades | 2: Hearts | 3: Clubs | 4: Diamonds
+    private final int number; //11: Jack | 12: Queen | 13: King | 14: Ace
+    private final int symbol; //1: Spades | 2: Hearts | 3: Clubs | 4: Diamonds
 
     public Card(int number, int symbol) {
         this.number = number;
         this.symbol = symbol;
-
     }
 
     public int getNumber() {
