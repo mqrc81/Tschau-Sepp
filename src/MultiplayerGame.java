@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 
 /**
@@ -12,20 +13,7 @@ public class MultiplayerGame extends NewGame {
 
     public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
-        drawPileButton.addActionListener(ae -> {
-            Card played = whatCard(discardPileButton);
-            if (!validCard(played)) {
-                players[p].addCard(aCard());
-                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
-                updateHand(players[p].getCards(), p);
-                System.out.println("Card received");
-                if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
-                    nextPlayer();
-                }
-            } else {
-                System.out.println("Error: Player has valid Card");
-            }
-        });
+        drawPileButton.addActionListener(new DrawCard());
         //
         playerLabel[p].setBackground(green);
         System.out.println("Player " + (p + 1) + "'s turn");
@@ -46,7 +34,7 @@ public class MultiplayerGame extends NewGame {
                 button[x].setBackground(lightBlue);
                 button[x].setIcon(img(card.getName()));
                 handPanel[player].add(button[x]);
-                button[x].addActionListener(new CardListener(this, player));
+                button[x].addActionListener(new PlayCard(player));
                 x++;
             }
         } else { //Spieler links oder rechts -> 7 Karten -> 2x4
@@ -68,7 +56,7 @@ public class MultiplayerGame extends NewGame {
                     handPanel[player].add(emptyButton);
                 }
                 handPanel[player].add(button[x]);
-                button[x].addActionListener(new CardListener(this, player));
+                button[x].addActionListener(new PlayCard(player));
                 x++;
             }
         }
@@ -92,6 +80,52 @@ public class MultiplayerGame extends NewGame {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cards/" + name + ".png"));
         Image img = icon.getImage().getScaledInstance(70, 105, java.awt.Image.SCALE_SMOOTH);
         return new ImageIcon(img, name);
+    }
+
+    public class PlayCard implements ActionListener {
+
+        int player;
+
+        public PlayCard(int player) {
+            this.player = player;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (p == player) {
+                Card clicked = whatCard((JButton)ae.getSource());
+                Card played = whatCard(discardPileButton);
+                if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
+                    System.out.println("Correct Card");
+                    discardPileButton.setIcon(img(clicked.getName(), 180, 270));
+                    players[p].removeCard(clicked);
+                    nextPlayer();
+                } else {
+                    System.out.println("Error: Invalid Card");
+                }
+            } else {
+                System.out.println("Error: Wrong Player");
+            }
+        }
+    }
+
+
+    public class DrawCard implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            Card played = MultiplayerGame.this.whatCard(discardPileButton);
+            if (!MultiplayerGame.this.validCard(played)) {
+                players[p].addCard(MultiplayerGame.this.aCard());
+                drawPileButton.setIcon(MultiplayerGame.this.img(MultiplayerGame.this.cardBack(), true, 90, 135));
+                MultiplayerGame.this.updateHand(players[p].getCards(), p);
+                System.out.println("Card received");
+                if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
+                    MultiplayerGame.this.nextPlayer();
+                }
+            } else {
+                System.out.println("Error: Player has valid Card");
+            }
+        }
     }
 
 }
