@@ -14,7 +14,7 @@ public abstract class NewGame extends JFrame {
     public final Card[] cards = new Card[104];
     public final Player[] players = new Player[4];
 
-    public int p = 0;
+    public int p = (int)(Math.random() * 4);
     private int cardCounter = -1;
 
     public JPanel[] handPanel = new JPanel[4];
@@ -24,7 +24,7 @@ public abstract class NewGame extends JFrame {
     private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, cardPlayedPanel, extraButtonsPanel;
 
     public final Color lightBlue = new Color(229, 244, 255);
-    private final Color turquoise = new Color(0, 127, 127);
+    public final Color turquoise = new Color(0, 127, 127);
     public final Color lightYellow = new Color(255, 255, 153);
     public final Color green = new Color(100, 255, 100);
     private final Color lightRed = new Color(255, 153, 153);
@@ -184,6 +184,18 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    public void nextPlayer() {
+        updateHand(players[p].getCards(), p);
+        playerLabel[p].setBackground(lightYellow);
+        if (p == 3) {
+            p = 0;
+        } else {
+            p++;
+        }
+        System.out.println("Player " + (p + 1) + "'s turn");
+        playerLabel[p].setBackground(green);
+    }
+
     public Card aCard() {
         cardCounter++;
         return cards[cardCounter];
@@ -226,7 +238,5 @@ public abstract class NewGame extends JFrame {
     }
 
     public abstract void updateHand(List<Card> cards, int p);
-
-    public abstract void nextPlayer();
 
 }

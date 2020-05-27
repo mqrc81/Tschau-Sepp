@@ -21,8 +21,4 @@ public class SingleplayerGame extends NewGame {
         handPanel[p].repaint();
     }
 
-    public void nextPlayer() {
-
-    }
-
 }

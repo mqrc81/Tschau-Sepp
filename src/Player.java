@@ -21,13 +21,8 @@ public class Player {
         cards.add(c);
     }
 
-    //FIXME
     public void removeCard(Card cRemove) {
-        if (cards.removeIf(c -> c.getName().equals(cRemove.getName()))) {
-            System.out.println("Yes babyyyyyy");
-        } else {
-            System.out.println("no baby nooooo");
-        }
+        cards.removeIf(c -> c.getName().equals(cRemove.getName()));
     }
 
     public int handSize() {

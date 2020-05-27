@@ -24,6 +24,7 @@ public class CardListener implements ActionListener {
             Card played = whatCard(g.cardPlayedButton);
             if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
                 System.out.println("Correct Card");
+                g.cardPlayedButton.setIcon(g.img(clicked.getName(), 180, 270));
                 g.players[p].removeCard(clicked);
                 g.nextPlayer();
             } else {

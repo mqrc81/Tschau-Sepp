@@ -12,7 +12,8 @@ public class MultiplayerGame extends NewGame {
 
     public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
-        playerLabel[0].setBackground(green);
+        playerLabel[p].setBackground(green);
+        System.out.println("Player " + (p + 1) + "'s turn");
     }
 
     public void updateHand(List<Card> cards, int player) {
@@ -59,24 +60,6 @@ public class MultiplayerGame extends NewGame {
         //
         handPanel[player].revalidate();
         handPanel[player].repaint();
-    }
-
-    public void nextPlayer() {
-        //FIXME
-        updateHand(players[p].getCards(), p);
-        int x = 1;
-        for (Card c : players[p].getCards()) {
-            System.out.println(x + ": " + c.getName());
-            x++;
-        }
-        playerLabel[p].setBackground(lightYellow);
-        if (p == 3) {
-            p = 0;
-        } else {
-            p++;
-        }
-        System.out.println("Player " + (p + 1) + "'s turn");
-        playerLabel[p].setBackground(green);
     }
 
     public ImageIcon img(String name) {
