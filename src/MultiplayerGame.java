@@ -10,13 +10,13 @@ import java.util.List;
 
 public class MultiplayerGame extends NewGame {
 
-    public MultiplayerGame () {
+    public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
         playerLabel[0].setBackground(green);
     }
 
     public void updateHand(List<Card> cards, int player) {
-        handPanel[player] = new JPanel();
+        handPanel[player].removeAll();
         handPanel[player].setBackground(lightBlue);
         //
         if (player % 2 == 0) { //Spieler oben oder unten -> 7 Karten -> 7x1
@@ -24,7 +24,7 @@ public class MultiplayerGame extends NewGame {
             handPanel[player].setLayout(new GridLayout(1, cards.size(), 5, 5));
             JButton[] button = new JButton[cards.size()];
             int x = 0;
-            for (Card card: cards) {
+            for (Card card : cards) {
                 button[x] = new JButton();
                 button[x].setPreferredSize(new Dimension(70, 105));
                 button[x].setBackground(lightBlue);
@@ -38,7 +38,7 @@ public class MultiplayerGame extends NewGame {
             handPanel[player].setLayout(new GridLayout(((cards.size() + 1) / 2), 2, 5, 5));
             int x = 0;
             JButton[] button = new JButton[cards.size()];
-            for (Card card: cards) {
+            for (Card card : cards) {
                 button[x] = new JButton();
                 button[x].setPreferredSize(new Dimension(70, 105));
                 button[x].setBackground(lightBlue);
@@ -65,7 +65,7 @@ public class MultiplayerGame extends NewGame {
         //FIXME
         updateHand(players[p].getCards(), p);
         int x = 1;
-        for (Card c: players[p].getCards()) {
+        for (Card c : players[p].getCards()) {
             System.out.println(x + ": " + c.getName());
             x++;
         }

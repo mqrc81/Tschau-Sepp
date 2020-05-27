@@ -1,6 +1,5 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 /**
  * @author: Marc Schmidt
@@ -26,8 +25,7 @@ public class CardListener implements ActionListener {
             if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
                 System.out.println("Correct Card");
                 g.players[p].removeCard(clicked);
-                //FIXME
-                //g.playerTurn();
+                g.nextPlayer();
             } else {
                 System.out.println("Wrong Card");
             }

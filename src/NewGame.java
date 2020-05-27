@@ -1,9 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author: Marc Schmidt
@@ -180,6 +179,7 @@ public abstract class NewGame extends JFrame {
             for (int y = 0; y < 7; y++) {
                 players[x].addCard(aCard());
             }
+            handPanel[x] = new JPanel();
             updateHand(players[x].getCards(), x);
         }
     }

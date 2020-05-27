@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Marc Schmidt
@@ -23,8 +22,12 @@ public class Player {
     }
 
     //FIXME
-    public void removeCard(Card c) {
-        cards.remove(c);
+    public void removeCard(Card cRemove) {
+        if (cards.removeIf(c -> c.getName().equals(cRemove.getName()))) {
+            System.out.println("Yes babyyyyyy");
+        } else {
+            System.out.println("no baby nooooo");
+        }
     }
 
     public int handSize() {
