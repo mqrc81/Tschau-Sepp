@@ -15,8 +15,8 @@ public class MultiplayerGame extends NewGame {
         setTitle("Multiplayer | Tschau Sepp Premium");
         drawPileButton.addActionListener(new DrawCard());
         //
-        playerLabel[p].setBackground(green);
-        System.out.println("Player " + (p + 1) + "'s turn");
+        playerLabel[currentPlayer].setBackground(green);
+        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
 
     public void updateHand(List<Card> cards, int player) {
@@ -67,7 +67,7 @@ public class MultiplayerGame extends NewGame {
 
     public boolean validCard(Card played) {
         boolean valid = false;
-        for (Card c: players[p].getCards()) {
+        for (Card c: players[currentPlayer].getCards()) {
             if (c.getSymbol() == played.getSymbol() || c.getNumber() == played.getNumber()) {
                 valid = true;
                 break;
@@ -92,13 +92,13 @@ public class MultiplayerGame extends NewGame {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            if (p == player) {
+            if (currentPlayer == player) {
                 Card clicked = whatCard((JButton)ae.getSource());
                 Card played = whatCard(discardPileButton);
                 if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
                     System.out.println("Correct Card");
                     discardPileButton.setIcon(img(clicked.getName(), 180, 270));
-                    players[p].removeCard(clicked);
+                    players[currentPlayer].removeCard(clicked);
                     nextPlayer();
                 } else {
                     System.out.println("Error: Invalid Card");
@@ -115,9 +115,9 @@ public class MultiplayerGame extends NewGame {
         public void actionPerformed(ActionEvent ae) {
             Card played = MultiplayerGame.this.whatCard(discardPileButton);
             if (!MultiplayerGame.this.validCard(played)) {
-                players[p].addCard(MultiplayerGame.this.aCard());
+                players[currentPlayer].addCard(MultiplayerGame.this.aCard());
                 drawPileButton.setIcon(MultiplayerGame.this.img(MultiplayerGame.this.cardBack(), true, 90, 135));
-                MultiplayerGame.this.updateHand(players[p].getCards(), p);
+                MultiplayerGame.this.updateHand(players[currentPlayer].getCards(), currentPlayer);
                 System.out.println("Card received");
                 if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
                     MultiplayerGame.this.nextPlayer();

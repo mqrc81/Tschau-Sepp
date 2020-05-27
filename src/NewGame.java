@@ -11,26 +11,26 @@ import java.util.*;
  */
 
 public abstract class NewGame extends JFrame {
-    public final Card[] cards = new Card[104];
-    public final Player[] players = new Player[4];
+    protected final Card[] cards = new Card[104];
+    protected final Player[] players = new Player[4];
 
-    public int p = (int)(Math.random() * 4);
-    public int cardCounter = -1;
+    protected int currentPlayer = (int)(Math.random() * 4);
+    protected int cardCounter = -1;
 
-    public JPanel[] handPanel = new JPanel[4];
-    public JLabel[] playerLabel = new JLabel[4];
-    public JButton tschauButton, seppButton, drawPileButton, discardPileButton;
+    protected JPanel[] handPanel = new JPanel[4];
+    protected JLabel[] playerLabel = new JLabel[4];
+    protected JButton tschauButton, seppButton, drawPileButton, discardPileButton;
 
     private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, discardPilePanel, extraButtonsPanel;
 
-    public final Color lightBlue = new Color(229, 244, 255);
-    public final Color turquoise = new Color(0, 127, 127);
-    public final Color lightYellow = new Color(255, 255, 153);
-    public final Color green = new Color(100, 255, 100);
-    private final Color lightRed = new Color(255, 153, 153);
-    private final Color darkRed = new Color(124, 9, 15);
-    private final Font font = new Font("Abadi", Font.BOLD, 20);
-    private GridBagConstraints c = new GridBagConstraints();
+    protected final Color lightBlue = new Color(229, 244, 255);
+    protected final Color turquoise = new Color(0, 127, 127);
+    protected final Color lightYellow = new Color(255, 255, 153);
+    protected final Color green = new Color(100, 255, 100);
+    protected final Color lightRed = new Color(255, 153, 153);
+    protected final Color darkRed = new Color(124, 9, 15);
+    protected final Font font = new Font("Abadi", Font.BOLD, 20);
+    protected GridBagConstraints c = new GridBagConstraints();
 
     public NewGame() {
         gui1();
@@ -185,15 +185,15 @@ public abstract class NewGame extends JFrame {
     }
 
     public void nextPlayer() {
-        updateHand(players[p].getCards(), p);
-        playerLabel[p].setBackground(lightYellow);
-        if (p == 3) {
-            p = 0;
+        updateHand(players[currentPlayer].getCards(), currentPlayer);
+        playerLabel[currentPlayer].setBackground(lightYellow);
+        if (currentPlayer == 3) {
+            currentPlayer = 0;
         } else {
-            p++;
+            currentPlayer++;
         }
-        System.out.println("Player " + (p + 1) + "'s turn");
-        playerLabel[p].setBackground(green);
+        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
+        playerLabel[currentPlayer].setBackground(green);
     }
 
     public Card whatCard(JButton b) {
