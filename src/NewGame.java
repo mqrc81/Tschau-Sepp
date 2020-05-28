@@ -18,6 +18,7 @@ public abstract class NewGame extends JFrame {
     protected int playerRotation = 1;
     protected int cardCounter = -1;
 
+    protected boolean ace = false;
     protected boolean skipPlayer = false;
 
     protected JPanel[] handPanel = new JPanel[4];
@@ -317,12 +318,8 @@ public abstract class NewGame extends JFrame {
 
     //LISTENERS: -----------------------------------------------------------------------------------
     public class PlayCard implements ActionListener {
-
         int player;
-
-        public PlayCard(int player) {
-            this.player = player;
-        }
+        public PlayCard(int player) { this.player = player; }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -330,10 +327,16 @@ public abstract class NewGame extends JFrame {
                 Card clicked = whatCard((JButton)ae.getSource());
                 Card played = whatCard(discardPileButton);
                 if (clicked.getNumber() == 11) {
+                    if (ace) {
+                        ace = false;
+                    }
                     players[currentPlayer].removeCard(clicked);
                     new NewGame.ChooseSymbolFrame();
                 } else {
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
+                        if (ace) {
+                            ace = false;
+                        }
                         System.out.println("Correct Card");
                         discardPileButton.setIcon(img(clicked.getName(), 180, 270));
                         players[currentPlayer].removeCard(clicked);
@@ -341,6 +344,8 @@ public abstract class NewGame extends JFrame {
                             playerRotation = 3 - playerRotation;
                         } else if (clicked.getNumber() == 8) {
                             skipPlayer = true;
+                        } else if (clicked.getNumber() == 14) {
+                            ace = true;
                         }
                         nextPlayer();
                     } else {

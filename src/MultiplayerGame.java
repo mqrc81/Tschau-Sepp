@@ -26,8 +26,10 @@ public class MultiplayerGame extends NewGame {
             whosNext();
             skipPlayer = false;
         }
-        whosNext();
-        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
+        if (!ace) {
+            whosNext();
+            System.out.println("Player " + (currentPlayer + 1) + "'s turn");
+        }
         playerLabel[currentPlayer].setBackground(green);
     }
 
