@@ -95,13 +95,18 @@ public class MultiplayerGame extends NewGame {
             if (currentPlayer == player) {
                 Card clicked = whatCard((JButton)ae.getSource());
                 Card played = whatCard(discardPileButton);
-                if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
-                    System.out.println("Correct Card");
-                    discardPileButton.setIcon(img(clicked.getName(), 180, 270));
+                if (clicked.getNumber() == 11) {
                     players[currentPlayer].removeCard(clicked);
-                    nextPlayer();
+                    new ChooseSymbolFrame();
                 } else {
-                    System.out.println("Error: Invalid Card");
+                    if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
+                        System.out.println("Correct Card");
+                        discardPileButton.setIcon(img(clicked.getName(), 180, 270));
+                        players[currentPlayer].removeCard(clicked);
+                        nextPlayer();
+                    } else {
+                        System.out.println("Error: Invalid Card");
+                    }
                 }
             } else {
                 System.out.println("Error: Wrong Player");
@@ -113,18 +118,67 @@ public class MultiplayerGame extends NewGame {
     public class DrawCard implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Card played = MultiplayerGame.this.whatCard(discardPileButton);
-            if (!MultiplayerGame.this.validCard(played)) {
-                players[currentPlayer].addCard(MultiplayerGame.this.aCard());
-                drawPileButton.setIcon(MultiplayerGame.this.img(MultiplayerGame.this.cardBack(), true, 90, 135));
-                MultiplayerGame.this.updateHand(players[currentPlayer].getCards(), currentPlayer);
+            Card played = whatCard(discardPileButton);
+            if (!validCard(played)) {
+                players[currentPlayer].addCard(aCard());
+                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+                updateHand(players[currentPlayer].getCards(), currentPlayer);
                 System.out.println("Card received");
                 if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
-                    MultiplayerGame.this.nextPlayer();
+                    nextPlayer();
                 }
             } else {
                 System.out.println("Error: Player has valid Card");
             }
+        }
+    }
+
+    public class ChooseSymbol implements ActionListener {
+        ChooseSymbolFrame csf;
+        int x;
+        public ChooseSymbol(int x, ChooseSymbolFrame csf) {
+            this.x = x;
+            this.csf = csf;
+        }
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            discardPileButton.setIcon(img("11_" + (x + 1), 180, 270));
+            csf.dispose();
+            nextPlayer();
+        }
+    }
+
+    public class ChooseSymbolFrame extends JFrame {
+        public ChooseSymbolFrame() {
+            super("Choose Symbol");
+            setLayout(new GridBagLayout());
+            setIconImage(MultiplayerGame.this.getIconImage());
+            setSize(new Dimension(330, 125));
+            setResizable(false);
+            getContentPane().setBackground(lightBlue);
+            JPanel csPanel = new JPanel(new GridLayout(1, 4, 10 ,10));
+            csPanel.setBackground(lightBlue);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
+            add(csPanel, gbc);
+            JButton[] jacks = new JButton[4];
+            for (int x = 0; x < 4; x++) {
+                jacks[x] = new JButton();
+                jacks[x].setPreferredSize(new Dimension(70, 105));
+                jacks[x].setBackground(lightBlue);
+                jacks[x].setIcon(img("11_" + (x + 1), 70, 105));
+                csPanel.add(jacks[x]);
+                jacks[x].addActionListener(new ChooseSymbol(x, this));
+            }
+            addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent we) {
+                    new ChooseSymbolFrame();
+                }
+            });
+            setLocationRelativeTo(null);
+            setVisible(true);
+            pack();
         }
     }
 
