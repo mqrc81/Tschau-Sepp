@@ -22,19 +22,11 @@ public class MultiplayerGame extends NewGame {
     public void nextPlayer() {
         updateHand(players[currentPlayer].getCards(), currentPlayer);
         playerLabel[currentPlayer].setBackground(lightYellow);
-        if (playerRotation == 1) {
-            if (currentPlayer == 3) {
-                currentPlayer = 0;
-            } else {
-                currentPlayer++;
-            }
-        } else {
-            if (currentPlayer == 0) {
-                currentPlayer = 3;
-            } else {
-                currentPlayer--;
-            }
+        if (skipPlayer) {
+            whosNext();
+            skipPlayer = false;
         }
+        whosNext();
         System.out.println("Player " + (currentPlayer + 1) + "'s turn");
         playerLabel[currentPlayer].setBackground(green);
     }

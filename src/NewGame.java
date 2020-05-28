@@ -18,6 +18,8 @@ public abstract class NewGame extends JFrame {
     protected int playerRotation = 1;
     protected int cardCounter = -1;
 
+    protected boolean skipPlayer = false;
+
     protected JPanel[] handPanel = new JPanel[4];
     protected JLabel[] playerLabel = new JLabel[4];
     protected JButton tschauButton, seppButton, drawPileButton, discardPileButton;
@@ -251,6 +253,22 @@ public abstract class NewGame extends JFrame {
         return new ImageIcon(img, name);
     }
 
+    public void whosNext() {
+        if (playerRotation == 1) {
+            if (currentPlayer == 3) {
+                currentPlayer = 0;
+            } else {
+                currentPlayer++;
+            }
+        } else {
+            if (currentPlayer == 0) {
+                currentPlayer = 3;
+            } else {
+                currentPlayer--;
+            }
+        }
+    }
+
     public void updateHand(List<Card> cards, int player) {
         handPanel[player].removeAll();
         handPanel[player].setBackground(lightBlue);
@@ -321,6 +339,8 @@ public abstract class NewGame extends JFrame {
                         players[currentPlayer].removeCard(clicked);
                         if (clicked.getNumber() == 10) {
                             playerRotation = 3 - playerRotation;
+                        } else if (clicked.getNumber() == 8) {
+                            skipPlayer = true;
                         }
                         nextPlayer();
                     } else {
