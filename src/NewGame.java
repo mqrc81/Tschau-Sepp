@@ -101,6 +101,7 @@ public abstract class NewGame extends JFrame {
         drawPileButton.setMargin(new Insets(0, 0, 0, 0));
         drawPileButton.setBorder(null);
         drawPileButton.setFocusable(false);
+        drawPileButton.addActionListener(new DrawCardListener());
         extraButtonsPanel.add(drawPileButton, c(0, 85, 0, 0, 1, 0));
         //
         discardPileButton = new JButton();

@@ -8,8 +8,6 @@ public class MultiplayerGame extends NewGame {
 
     public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
-        drawPileButton.addActionListener(new DrawCardListener());
-        //
         playerLabel[currentPlayer].setBackground(green);
         System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
