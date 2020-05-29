@@ -8,7 +8,7 @@ public class MultiplayerGame extends NewGame {
 
     public MultiplayerGame() {
         setTitle("Multiplayer | Tschau Sepp Premium");
-        drawPileButton.addActionListener(new DrawCard());
+        drawPileButton.addActionListener(new DrawCardListener());
         //
         playerLabel[currentPlayer].setBackground(green);
         System.out.println("Player " + (currentPlayer + 1) + "'s turn");
@@ -16,8 +16,12 @@ public class MultiplayerGame extends NewGame {
 
     public void nextPlayer() {
         wrongPlayer.stop();
-        if (players[currentPlayer].getCards().size() == 0 && !ace) {
-            new GameOver(players, this);
+        if (players[currentPlayer].getCards().size() == 0) {
+            sepp = true;
+            lastPlayer = currentPlayer;
+        } else if (players[currentPlayer].getCards().size() == 1) {
+            tschau = true;
+            lastPlayer = currentPlayer;
         }
         updateHand(players[currentPlayer].getCards(), currentPlayer);
         playerLabel[currentPlayer].setBackground(lightYellow);
@@ -31,9 +35,10 @@ public class MultiplayerGame extends NewGame {
         } else if (seven != 0) {
             if(!validCard(new Card(7, 0))) {
                 while (seven > 0) {
-                    drawPileButton.doClick();
+                    players[currentPlayer].addCard(aCard());
                     seven--;
                 }
+                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
                 updateHand(players[currentPlayer].getCards(), currentPlayer);
             }
         }

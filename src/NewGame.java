@@ -22,6 +22,9 @@ public abstract class NewGame extends JFrame {
     protected boolean eight = false;
     protected int ten = 1;
     protected boolean ace = false;
+    protected boolean tschau = false;
+    protected boolean sepp = false;
+    protected int lastPlayer;
 
     protected JPanel[] handPanel = new JPanel[4];
     protected JLabel[] playerLabel = new JLabel[4];
@@ -81,12 +84,14 @@ public abstract class NewGame extends JFrame {
         tschauButton.setFont(font);
         tschauButton.setBackground(lightRed);
         tschauButton.setFocusable(false);
+        tschauButton.addActionListener(new TschauListener());
         extraButtonsPanel.add(tschauButton, c(15, 100, 0, 100, 0, 0));
         seppButton = new JButton("Sepp");
         seppButton.setPreferredSize(new Dimension(170, 115));
         seppButton.setFont(font);
         seppButton.setBackground(lightRed);
         seppButton.setFocusable(false);
+        seppButton.addActionListener(new SeppListener());
         extraButtonsPanel.add(seppButton, c(15, 100, 100, 0, 2, 0));
         //
         drawPileButton = new JButton();
@@ -253,6 +258,24 @@ public abstract class NewGame extends JFrame {
         return valid;
     }
 
+    public void tschauOrSepp() {
+        if (tschau) {
+            players[lastPlayer].addCard(aCard());
+            players[lastPlayer].addCard(aCard());
+            drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+            updateHand(players[lastPlayer].getCards(), lastPlayer);
+            tschau = false;
+        } else if (sepp) {
+            players[lastPlayer].addCard(aCard());
+            players[lastPlayer].addCard(aCard());
+            players[lastPlayer].addCard(aCard());
+            players[lastPlayer].addCard(aCard());
+            drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+            updateHand(players[lastPlayer].getCards(), lastPlayer);
+            sepp = false;
+        }
+    }
+
     public ImageIcon img(String name) {
         ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cards/" + name + ".png"));
         Image img = icon.getImage().getScaledInstance(70, 105, java.awt.Image.SCALE_SMOOTH);
@@ -290,7 +313,7 @@ public abstract class NewGame extends JFrame {
                 button[x].setBackground(lightBlue);
                 button[x].setIcon(img(card.getName()));
                 handPanel[player].add(button[x]);
-                button[x].addActionListener(new PlayCard(player));
+                button[x].addActionListener(new PlayCardListener(player));
                 x++;
             }
         } else { //Spieler links oder rechts -> 7 Karten -> 2x4
@@ -312,7 +335,7 @@ public abstract class NewGame extends JFrame {
                     handPanel[player].add(emptyButton);
                 }
                 handPanel[player].add(button[x]);
-                button[x].addActionListener(new PlayCard(player));
+                button[x].addActionListener(new PlayCardListener(player));
                 x++;
             }
         }
@@ -322,10 +345,10 @@ public abstract class NewGame extends JFrame {
     }
 
     //LISTENERS: -----------------------------------------------------------------------------------
-    public class PlayCard implements ActionListener {
+    public class PlayCardListener implements ActionListener {
 
         int player;
-        public PlayCard(int player) { this.player = player; }
+        public PlayCardListener(int player) { this.player = player; }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -338,11 +361,13 @@ public abstract class NewGame extends JFrame {
                     played = whatCard(discardPileButton);
                 }
                 if (clicked.getNumber() == 11) {
+                    tschauOrSepp();
                     if (ace) { ace = false; }
                     players[currentPlayer].removeCard(clicked);
                     new NewGame.ChooseSymbolFrame();
                 } else {
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
+                        tschauOrSepp();
                         if (ace) { ace = false; }
                         System.out.println("Correct Card");
                         discardPileButton.setIcon(img(clicked.getName(), 180, 270));
@@ -370,21 +395,18 @@ public abstract class NewGame extends JFrame {
         }
     }
 
-
-
-    public class DrawCard implements ActionListener {
+    public class DrawCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
             Card played = whatCard(discardPileButton);
-            if (!validCard(played) || seven > 0) {
+            if (!validCard(played)) {
+                tschauOrSepp();
                 players[currentPlayer].addCard(aCard());
                 drawPileButton.setIcon(img(cardBack(), true, 90, 135));
                 updateHand(players[currentPlayer].getCards(), currentPlayer);
                 System.out.println("Card received");
-                if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
-                    if (seven == 0) {
+                if (!validCard(played)) {
                         nextPlayer();
-                    }
                 }
             } else {
                 System.out.println("Error: Player has valid Card");
@@ -438,6 +460,35 @@ public abstract class NewGame extends JFrame {
             setLocationRelativeTo(null);
             setVisible(true);
             pack();
+        }
+    }
+
+    class TschauListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (tschau) {
+                tschau = false;
+                System.out.println("Spieler " + lastPlayer +" says \"Tschau\"");
+            } else {
+                System.out.println("Error: Tschau not possible");
+            }
+        }
+    }
+
+    class SeppListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (sepp) {
+                if (ace) {
+                    sepp = false;
+                } else {
+                    new GameOver(players, NewGame.this);
+                }
+            } else {
+                System.out.println("Error: Sepp not possible");
+            }
         }
     }
 

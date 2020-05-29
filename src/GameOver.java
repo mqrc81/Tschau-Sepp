@@ -22,16 +22,16 @@ public class GameOver extends JFrame {
     private final Font font = new Font("Dubai Medium", Font.PLAIN, 16);
     GridBagConstraints gbc = new GridBagConstraints();
 
-    public GameOver(Player[] players, NewGame g) {
+    public GameOver(Player[] players, NewGame ng) {
         super("Congratulations!");
         getContentPane().setBackground(lightBlue);
         setMinimumSize(new Dimension(600, 400));
-        setIconImage(g.getIconImage());
+        setIconImage(ng.getIconImage());
         setResizable(false);
         setLayout(new GridBagLayout());
         gbc.insets = new Insets(0, 0, 5, 0);
         gbc.gridy = 0;
-        g.dispose();
+        ng.dispose();
         //
         int[] rank = new int[4];
         for (int x = 0; x < 4; x++) {
@@ -57,7 +57,8 @@ public class GameOver extends JFrame {
                         gbc.gridy++;
                         break;
                     } else {
-                        labels[x] = new JLabel((x + 1) + ".: Player " + (y + 1) + " (" + rank[x] + " points)");
+                        labels[x] =
+                                new JLabel((x + 1) + ". place: Player " + (y + 1) + " (" + rank[x] + " points)");
                         labels[x].setBackground(lightBlue);
                         labels[x].setFont(font);
                         add(labels[x], gbc);
