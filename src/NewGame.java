@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -15,11 +16,12 @@ public abstract class NewGame extends JFrame {
     protected final Player[] players = new Player[4];
 
     protected int currentPlayer = (int)(Math.random() * 4);
-    protected int playerRotation = 1;
     protected int cardCounter = -1;
 
+    protected int seven = 0;
+    protected boolean eight = false;
+    protected int ten = 1;
     protected boolean ace = false;
-    protected boolean skipPlayer = false;
 
     protected JPanel[] handPanel = new JPanel[4];
     protected JLabel[] playerLabel = new JLabel[4];
@@ -33,8 +35,8 @@ public abstract class NewGame extends JFrame {
     protected final Color green = new Color(100, 255, 100);
     protected final Color lightRed = new Color(255, 153, 153);
     protected final Color darkRed = new Color(124, 9, 15);
-    protected final Font font = new Font("Abadi", Font.BOLD, 20);
-    protected GridBagConstraints c = new GridBagConstraints();
+    protected final Font font = new Font("Dubai Medium", Font.PLAIN, 24);
+    protected GridBagConstraints gbc = new GridBagConstraints();
 
     public NewGame() {
         gui1();
@@ -107,7 +109,7 @@ public abstract class NewGame extends JFrame {
         //
         for (int x = 0; x < 4; x++) {
             playerLabel[x] = new JLabel("Player " + (x + 1), SwingConstants.CENTER);
-            playerLabel[x].setFont(font.deriveFont(16f));
+            playerLabel[x].setFont(font.deriveFont(18f));
             playerLabel[x].setOpaque(true);
             playerLabel[x].setBackground(lightYellow);
             playerLabel[x].setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
@@ -224,23 +226,26 @@ public abstract class NewGame extends JFrame {
     }
 
     public GridBagConstraints c(int x, int y) {
-        c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = x;
-        c.gridy = y;
-        return c;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.gridx = x;
+        gbc.gridy = y;
+        return gbc;
     }
 
     public GridBagConstraints c(int top, int bottom, int left, int right, int gridx, int gridy) {
-        c.insets = new Insets(top, left, bottom, right);
-        c.gridx = gridx;
-        c.gridy = gridy;
-        return c;
+        gbc.insets = new Insets(top, left, bottom, right);
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        return gbc;
     }
 
     public boolean validCard(Card played) {
         boolean valid = false;
         for (Card c: players[currentPlayer].getCards()) {
-            if (c.getSymbol() == played.getSymbol() || c.getNumber() == played.getNumber() || c.getNumber() == 11) {
+            if (c.getSymbol() == played.getSymbol() || c.getNumber() == played.getNumber()) {
+                valid = true;
+                break;
+            } else if (c.getNumber() == 11 && played.getSymbol() != 0) {
                 valid = true;
                 break;
             }
@@ -255,7 +260,7 @@ public abstract class NewGame extends JFrame {
     }
 
     public void whosNext() {
-        if (playerRotation == 1) {
+        if (ten == 1) {
             if (currentPlayer == 3) {
                 currentPlayer = 0;
             } else {
@@ -318,6 +323,7 @@ public abstract class NewGame extends JFrame {
 
     //LISTENERS: -----------------------------------------------------------------------------------
     public class PlayCard implements ActionListener {
+
         int player;
         public PlayCard(int player) { this.player = player; }
 
@@ -325,27 +331,30 @@ public abstract class NewGame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             if (currentPlayer == player) {
                 Card clicked = whatCard((JButton)ae.getSource());
-                Card played = whatCard(discardPileButton);
+                Card played;
+                if (seven != 0) {
+                    played = new Card(7, 0);
+                } else {
+                    played = whatCard(discardPileButton);
+                }
                 if (clicked.getNumber() == 11) {
-                    if (ace) {
-                        ace = false;
-                    }
+                    if (ace) { ace = false; }
                     players[currentPlayer].removeCard(clicked);
                     new NewGame.ChooseSymbolFrame();
                 } else {
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
-                        if (ace) {
-                            ace = false;
-                        }
+                        if (ace) { ace = false; }
                         System.out.println("Correct Card");
                         discardPileButton.setIcon(img(clicked.getName(), 180, 270));
                         players[currentPlayer].removeCard(clicked);
                         if (clicked.getNumber() == 10) {
-                            playerRotation = 3 - playerRotation;
+                            ten = 3 - ten;
                         } else if (clicked.getNumber() == 8) {
-                            skipPlayer = true;
+                            eight = true;
                         } else if (clicked.getNumber() == 14) {
                             ace = true;
+                        } else if (clicked.getNumber() == 7) {
+                            seven += 2;
                         }
                         nextPlayer();
                     } else {
@@ -354,21 +363,28 @@ public abstract class NewGame extends JFrame {
                 }
             } else {
                 System.out.println("Error: Wrong Player");
+                playerLabel[currentPlayer].setBackground(darkRed);
+                playerLabel[currentPlayer].setForeground(Color.WHITE);
+                wrongPlayer.start();
             }
         }
     }
+
+
 
     public class DrawCard implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
             Card played = whatCard(discardPileButton);
-            if (!validCard(played)) {
+            if (!validCard(played) || seven > 0) {
                 players[currentPlayer].addCard(aCard());
                 drawPileButton.setIcon(img(cardBack(), true, 90, 135));
                 updateHand(players[currentPlayer].getCards(), currentPlayer);
                 System.out.println("Card received");
                 if (cards[cardCounter].getNumber() != played.getNumber() && cards[cardCounter].getSymbol() != played.getSymbol()) {
-                    nextPlayer();
+                    if (seven == 0) {
+                        nextPlayer();
+                    }
                 }
             } else {
                 System.out.println("Error: Player has valid Card");
@@ -424,5 +440,10 @@ public abstract class NewGame extends JFrame {
             pack();
         }
     }
+
+    Timer wrongPlayer = new Timer(1000, ae -> {
+        playerLabel[currentPlayer].setBackground(green);
+        playerLabel[currentPlayer].setForeground(Color.BLACK);
+    });
 
 }

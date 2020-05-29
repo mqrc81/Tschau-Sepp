@@ -14,8 +14,8 @@ public class Menu extends JFrame {
     private final Color lightBlue = new Color(229, 244, 255);
     private final Color darkRed = new Color(124, 9, 15);
     private final Color turquoise = new Color(0, 127, 127);
-    private final Font font = new Font("Abadi", Font.PLAIN, 12);
-    private final GridBagConstraints c = new GridBagConstraints();
+    private final Font font = new Font("Dubai Medium", Font.PLAIN, 14);
+    private final GridBagConstraints gbc = new GridBagConstraints();
 
     public Menu () {
         super("Menu | Tschau Sepp Premium");
@@ -37,20 +37,20 @@ public class Menu extends JFrame {
 
         JLabel welcomeLabel = new JLabel("Welcome to Tschau Sepp Premium!");
         welcomeLabel.setForeground(turquoise);
-        welcomeLabel.setFont(font.deriveFont(22f).deriveFont(Font.PLAIN));
+        welcomeLabel.setFont(font.deriveFont(26f).deriveFont(Font.PLAIN));
         labelPanel.setLayout(new GridBagLayout());
         labelPanel.add(welcomeLabel, c(0, 10, 0, 0, 0, 0));
         add(labelPanel, c(0, 25, 20, 20, 0, 0));
 
         JLabel creditLabel = new JLabel("by Marc Schmidt");
-        creditLabel.setFont(font.deriveFont(15f).deriveFont(Font.BOLD));
+        creditLabel.setFont(font.deriveFont(15f));
         labelPanel.add(creditLabel, c(0, 1));
 
         JButton singleplayerButton = new JButton("SinglePlayer");
         singleplayerButton.setBackground(darkRed);
         singleplayerButton.setForeground(Color.WHITE);
         singleplayerButton.setPreferredSize(new Dimension(300, 50));
-        singleplayerButton.setFont(font.deriveFont(18f).deriveFont(Font.BOLD));
+        singleplayerButton.setFont(font.deriveFont(20f));
         singleplayerButton.setFocusable(false);
         singleplayerButton.addMouseListener(new HoverListener());
         singleplayerButton.addActionListener(ae -> {
@@ -64,7 +64,7 @@ public class Menu extends JFrame {
         multiplayerButton.setBackground(darkRed);
         multiplayerButton.setForeground(Color.WHITE);
         multiplayerButton.setPreferredSize(new Dimension(300, 50));
-        multiplayerButton.setFont(font.deriveFont(18f).deriveFont(Font.BOLD));
+        multiplayerButton.setFont(font.deriveFont(20f));
         multiplayerButton.setFocusable(false);
         multiplayerButton.addMouseListener(new HoverListener());
         multiplayerButton.addActionListener(ae -> {
@@ -76,14 +76,14 @@ public class Menu extends JFrame {
     }
 
     public GridBagConstraints c(int x, int y) {
-        c.gridy = y;
-        return c;
+        gbc.gridy = y;
+        return gbc;
     }
 
     public GridBagConstraints c(int top, int bottom, int left, int right, int gridx, int gridy) {
-        c.insets = new Insets(top, left, bottom, right);
-        c.gridy = gridy;
-        return c;
+        gbc.insets = new Insets(top, left, bottom, right);
+        gbc.gridy = gridy;
+        return gbc;
     }
 
     public class HoverListener implements MouseListener {

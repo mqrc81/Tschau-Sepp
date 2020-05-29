@@ -9,6 +9,7 @@ import java.util.*;
 public class Player {
 
     private List<Card> cards = new ArrayList<>();
+    private int rank = 0;
 
     public Player() {
     }
@@ -17,12 +18,33 @@ public class Player {
         return cards;
     }
 
+    public int getPoints() {
+        int points = 0;
+        for (Card c: cards) {
+            points += c.getPoints();
+        }
+        return points;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     public void addCard(Card c) {
         cards.add(c);
     }
 
     public void removeCard(Card cRemove) {
-        cards.removeIf(c -> c.getName().equals(cRemove.getName()));
+        for (Card c: cards) {
+            if (c.getName().equals(cRemove.getName())) {
+                cards.remove(c);
+                break;
+            }
+        }
     }
 
     public int handSize() {

@@ -1,8 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-
 /**
  * @author: Marc Schmidt
  * @date: 2020-05-14
@@ -20,15 +15,27 @@ public class MultiplayerGame extends NewGame {
     }
 
     public void nextPlayer() {
+        wrongPlayer.stop();
+        if (players[currentPlayer].getCards().size() == 0 && !ace) {
+            new GameOver(players, this);
+        }
         updateHand(players[currentPlayer].getCards(), currentPlayer);
         playerLabel[currentPlayer].setBackground(lightYellow);
-        if (skipPlayer) {
-            whosNext();
-            skipPlayer = false;
-        }
         if (!ace) {
             whosNext();
             System.out.println("Player " + (currentPlayer + 1) + "'s turn");
+        }
+        if (eight) {
+            whosNext();
+            eight = false;
+        } else if (seven != 0) {
+            if(!validCard(new Card(7, 0))) {
+                while (seven > 0) {
+                    drawPileButton.doClick();
+                    seven--;
+                }
+                updateHand(players[currentPlayer].getCards(), currentPlayer);
+            }
         }
         playerLabel[currentPlayer].setBackground(green);
     }
