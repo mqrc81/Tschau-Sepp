@@ -22,7 +22,7 @@ public class Player {
 
     public int getPoints() {
         int points = 0;
-        for (Card c: cards) {
+        for (Card c : cards) {
             points += c.getPoints();
         }
         return points;
@@ -41,7 +41,7 @@ public class Player {
     }
 
     public void removeCard(Card cRemove) {
-        for (Card c: cards) {
+        for (Card c : cards) {
             if (c.getName().equals(cRemove.getName())) {
                 cards.remove(c);
                 break;
@@ -54,3 +54,4 @@ public class Player {
     }
 
 }
+
