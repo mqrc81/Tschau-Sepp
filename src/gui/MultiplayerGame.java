@@ -1,3 +1,7 @@
+package gui;
+
+import objects.Card;
+
 /**
  * @author: Marc Schmidt
  * @date: 2020-05-14

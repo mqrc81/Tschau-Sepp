@@ -1,7 +1,8 @@
+package gui;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 /**
  * @author: Marc Schmidt
@@ -18,7 +19,7 @@ public class Menu extends JFrame {
     private final GridBagConstraints gbc = new GridBagConstraints();
 
     public Menu () {
-        super("Menu | Tschau Sepp Premium");
+        super("gui.Menu | Tschau Sepp Premium");
         gui();
         setVisible(true);
     }

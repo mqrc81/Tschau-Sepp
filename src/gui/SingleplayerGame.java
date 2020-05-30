@@ -1,4 +1,6 @@
-import java.util.List;
+package gui;
+
+import objects.Card;
 
 /**
  * @author: Marc Schmidt

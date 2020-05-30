@@ -1,3 +1,7 @@
+package gui;
+
+import objects.*;
+
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
@@ -114,7 +118,7 @@ public abstract class NewGame extends JFrame {
         discardPilePanel.add(discardPileButton, c(60, 60, 0, 0, 0, 0));
         //
         for (int x = 0; x < 4; x++) {
-            playerLabel[x] = new JLabel("Player " + (x + 1), SwingConstants.CENTER);
+            playerLabel[x] = new JLabel("objects.Player " + (x + 1), SwingConstants.CENTER);
             playerLabel[x].setFont(font.deriveFont(18f));
             playerLabel[x].setOpaque(true);
             playerLabel[x].setBackground(lightYellow);
