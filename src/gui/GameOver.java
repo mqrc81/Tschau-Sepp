@@ -54,7 +54,7 @@ public class GameOver extends JFrame {
             for (int y = 0; y < 4; y++) {
                 if (players[y].getPoints() == rank[x]) {
                     if (x == 0) {
-                        labels[x] = new JLabel("Winner: objects.Player " + (y + 1) + "!");
+                        labels[x] = new JLabel("Winner: Player " + (y + 1) + "!");
                         labels[x].setFont(font.deriveFont(36f).deriveFont(Font.PLAIN));
                         labels[x].setForeground(purple);
                         add(labels[x], gbc);
@@ -62,7 +62,7 @@ public class GameOver extends JFrame {
                         break;
                     } else {
                         labels[x] =
-                                new JLabel((x + 1) + ". place: objects.Player " + (y + 1) + " (" + rank[x] + " points)");
+                                new JLabel((x + 1) + ". place: Player " + (y + 1) + " (" + rank[x] + " points)");
                         labels[x].setBackground(lightBlue);
                         labels[x].setFont(font);
                         add(labels[x], gbc);
@@ -73,7 +73,7 @@ public class GameOver extends JFrame {
             }
         }
 
-        JButton menuButton = new JButton("Return to gui.Menu");
+        JButton menuButton = new JButton("Return to Menu");
         menuButton.setBackground(darkRed);
         menuButton.setForeground(Color.WHITE);
         menuButton.setPreferredSize(new Dimension(300, 50));

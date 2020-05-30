@@ -19,7 +19,7 @@ public class Menu extends JFrame {
     private final GridBagConstraints gbc = new GridBagConstraints();
 
     public Menu () {
-        super("gui.Menu | Tschau Sepp Premium");
+        super("Menu | Tschau Sepp Premium");
         gui();
         setVisible(true);
     }

@@ -118,7 +118,7 @@ public abstract class NewGame extends JFrame {
         discardPilePanel.add(discardPileButton, c(60, 60, 0, 0, 0, 0));
         //
         for (int x = 0; x < 4; x++) {
-            playerLabel[x] = new JLabel("objects.Player " + (x + 1), SwingConstants.CENTER);
+            playerLabel[x] = new JLabel("Player " + (x + 1), SwingConstants.CENTER);
             playerLabel[x].setFont(font.deriveFont(18f));
             playerLabel[x].setOpaque(true);
             playerLabel[x].setBackground(lightYellow);
@@ -474,7 +474,7 @@ public abstract class NewGame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             if (tschau) {
                 tschau = false;
-                System.out.println("Spieler " + lastPlayer +" says \"Tschau\"");
+                System.out.println("Spieler " + (lastPlayer + 1) +" says \"Tschau\"");
             } else {
                 System.out.println("Error: Tschau not possible");
             }
@@ -486,6 +486,7 @@ public abstract class NewGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent ae) {
             if (sepp) {
+                System.out.println("Spieler " + (lastPlayer + 1) +" says \"Sepp\"");
                 if (ace) {
                     sepp = false;
                 } else {
