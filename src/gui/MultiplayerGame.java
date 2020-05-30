@@ -25,7 +25,7 @@ public class MultiplayerGame extends NewGame {
             tschau = true;
             lastPlayer = currentPlayer;
         }
-        updateHand(players[currentPlayer].getCards(), currentPlayer);
+        updateHand(players[currentPlayer].getCards(), currentPlayer, true);
         playerLabel[currentPlayer].setBackground(lightYellow);
         if (!ace) {
             whosNext();
@@ -40,10 +40,10 @@ public class MultiplayerGame extends NewGame {
                     players[currentPlayer].addCard(aCard());
                     seven--;
                 }
-                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
-                updateHand(players[currentPlayer].getCards(), currentPlayer);
+                drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
             }
         }
+        updateHand(players[currentPlayer].getCards(), currentPlayer, false);
         playerLabel[currentPlayer].setBackground(green);
     }
 

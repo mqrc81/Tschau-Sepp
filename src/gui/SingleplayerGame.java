@@ -12,10 +12,12 @@ public class SingleplayerGame extends NewGame {
 
     public SingleplayerGame() {
         setTitle("Singleplayer | Tschau Sepp Premium");
+        playerLabel[currentPlayer].setBackground(green);
+        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
 
     public void nextPlayer() {
-        updateHand(players[currentPlayer].getCards(), currentPlayer);
+        updateHand(players[currentPlayer].getCards(), currentPlayer, false);
         playerLabel[currentPlayer].setBackground(lightYellow);
         if (currentPlayer == 3) {
             currentPlayer = 0;
@@ -25,5 +27,4 @@ public class SingleplayerGame extends NewGame {
         System.out.println("Player " + (currentPlayer + 1) + "'s turn");
         playerLabel[currentPlayer].setBackground(green);
     }
-
 }

@@ -87,7 +87,7 @@ public class Menu extends JFrame {
         return gbc;
     }
 
-    public class HoverListener implements MouseListener {
+    class HoverListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent me) {}
         @Override

@@ -101,7 +101,7 @@ public abstract class NewGame extends JFrame {
         drawPileButton = new JButton();
         drawPileButton.setPreferredSize(new Dimension(90, 135));
         drawPileButton.setBackground(lightBlue);
-        drawPileButton.setIcon(img(cardBack(), true, 90, 135));
+        drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
         drawPileButton.setMargin(new Insets(0, 0, 0, 0));
         drawPileButton.setBorder(null);
         drawPileButton.setFocusable(false);
@@ -111,7 +111,7 @@ public abstract class NewGame extends JFrame {
         discardPileButton = new JButton();
         discardPileButton.setPreferredSize(new Dimension(180, 270));
         discardPileButton.setBackground(lightBlue);
-        discardPileButton.setIcon(img(aCard().getName(), 180, 270));
+        discardPileButton.setIcon(getImg(aCard().getName(), false, 180, 270));
         discardPileButton.setMargin(new Insets(0, 0, 0, 0));
         discardPileButton.setBorder(null);
         discardPileButton.setFocusable(false);
@@ -196,7 +196,11 @@ public abstract class NewGame extends JFrame {
                 players[x].addCard(aCard());
             }
             handPanel[x] = new JPanel();
-            updateHand(players[x].getCards(), x);
+            boolean back = true;
+            if (x == currentPlayer) {
+                back = false;
+            }
+            updateHand(players[x].getCards(), x, back);
         }
     }
 
@@ -213,18 +217,12 @@ public abstract class NewGame extends JFrame {
         return cards[cardCounter];
     }
 
-    public String cardBack() {
-        return "back" + (cards[cardCounter + 1].getSymbol() + cards[cardCounter + 1].getNumber()) % 6;
-    }
-
-    public ImageIcon img(String name, int width, int height) {
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cards/" + name + ".png"));
-        Image img = icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
-        return new ImageIcon(img, name);
-    }
-
-    public ImageIcon img(String name, boolean back, int width, int height) {
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cardsback/" + name + ".png"));
+    public ImageIcon getImg(String name, boolean back, int width, int height) {
+        String s = "cards/";
+        if (back) {
+            s = "cardsback/";
+        }
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/" + s + name + ".png"));
         Image img = icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
         return new ImageIcon(img, name);
     }
@@ -263,28 +261,22 @@ public abstract class NewGame extends JFrame {
         return valid;
     }
 
-    public void tschauOrSepp() {
-        if (tschau) {
-            players[lastPlayer].addCard(aCard());
-            players[lastPlayer].addCard(aCard());
-            drawPileButton.setIcon(img(cardBack(), true, 90, 135));
-            updateHand(players[lastPlayer].getCards(), lastPlayer);
-            tschau = false;
-        } else if (sepp) {
-            players[lastPlayer].addCard(aCard());
-            players[lastPlayer].addCard(aCard());
-            players[lastPlayer].addCard(aCard());
-            players[lastPlayer].addCard(aCard());
-            drawPileButton.setIcon(img(cardBack(), true, 90, 135));
-            updateHand(players[lastPlayer].getCards(), lastPlayer);
-            sepp = false;
+    public void isTschauOrSepp() {
+        if (tschau || sepp) {
+            int amount;
+            if (tschau) {
+                amount = 2;
+                tschau = false;
+            } else {
+                amount = 4;
+                sepp = false;
+            }
+            for (int x = 0; x < amount; x++) {
+                players[lastPlayer].addCard(aCard());
+            }
+            drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
+            updateHand(players[lastPlayer].getCards(), lastPlayer, true);
         }
-    }
-
-    public ImageIcon img(String name) {
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cards/" + name + ".png"));
-        Image img = icon.getImage().getScaledInstance(70, 105, java.awt.Image.SCALE_SMOOTH);
-        return new ImageIcon(img, name);
     }
 
     public void whosNext() {
@@ -303,7 +295,7 @@ public abstract class NewGame extends JFrame {
         }
     }
 
-    public void updateHand(List<Card> cards, int player) {
+    public void updateHand(List<Card> cards, int player, boolean back) {
         handPanel[player].removeAll();
         handPanel[player].setBackground(lightBlue);
         //
@@ -316,7 +308,7 @@ public abstract class NewGame extends JFrame {
                 button[x] = new JButton();
                 button[x].setPreferredSize(new Dimension(70, 105));
                 button[x].setBackground(lightBlue);
-                button[x].setIcon(img(card.getName()));
+                button[x].setIcon(getImg(card.getName(), back, 70, 105));
                 handPanel[player].add(button[x]);
                 button[x].addActionListener(new PlayCardListener(player));
                 x++;
@@ -330,7 +322,7 @@ public abstract class NewGame extends JFrame {
                 button[x] = new JButton();
                 button[x].setPreferredSize(new Dimension(70, 105));
                 button[x].setBackground(lightBlue);
-                button[x].setIcon(img(card.getName()));
+                button[x].setIcon(getImg(card.getName(), back, 70, 105));
                 if (player == 1 && cards.size() % 2 == 1 && (x + 1) == cards.size()) {
                     JButton emptyButton = new JButton();
                     emptyButton.setBackground(lightBlue);
@@ -350,7 +342,7 @@ public abstract class NewGame extends JFrame {
     }
 
     //LISTENERS: -----------------------------------------------------------------------------------
-    public class PlayCardListener implements ActionListener {
+    class PlayCardListener implements ActionListener {
 
         int player;
         public PlayCardListener(int player) { this.player = player; }
@@ -366,16 +358,16 @@ public abstract class NewGame extends JFrame {
                     played = whatCard(discardPileButton);
                 }
                 if (clicked.getNumber() == 11) {
-                    tschauOrSepp();
+                    isTschauOrSepp();
                     if (ace) { ace = false; }
                     players[currentPlayer].removeCard(clicked);
-                    new NewGame.ChooseSymbolFrame();
+                    new ChooseSymbol();
                 } else {
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
-                        tschauOrSepp();
+                        isTschauOrSepp();
                         if (ace) { ace = false; }
                         System.out.println("Correct Card");
-                        discardPileButton.setIcon(img(clicked.getName(), 180, 270));
+                        discardPileButton.setIcon(getImg(clicked.getName(), false, 180, 270));
                         players[currentPlayer].removeCard(clicked);
                         if (clicked.getNumber() == 10) {
                             ten = 3 - ten;
@@ -400,18 +392,20 @@ public abstract class NewGame extends JFrame {
         }
     }
 
-    public class DrawCardListener implements ActionListener {
+    class DrawCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
             Card played = whatCard(discardPileButton);
             if (!validCard(played)) {
-                tschauOrSepp();
+                isTschauOrSepp();
                 players[currentPlayer].addCard(aCard());
-                drawPileButton.setIcon(img(cardBack(), true, 90, 135));
-                updateHand(players[currentPlayer].getCards(), currentPlayer);
+                drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
                 System.out.println("Card received");
                 if (!validCard(played)) {
-                        nextPlayer();
+                    updateHand(players[currentPlayer].getCards(), currentPlayer, true);
+                    nextPlayer();
+                } else {
+                    updateHand(players[currentPlayer].getCards(), currentPlayer, false);
                 }
             } else {
                 System.out.println("Error: Player has valid Card");
@@ -419,23 +413,23 @@ public abstract class NewGame extends JFrame {
         }
     }
 
-    public class ChooseSymbol implements ActionListener {
-        ChooseSymbolFrame csf;
+    class ChooseSymbolListener implements ActionListener {
+        ChooseSymbol csf;
         int x;
-        public ChooseSymbol(int x, ChooseSymbolFrame csf) {
+        public ChooseSymbolListener(int x, ChooseSymbol csf) {
             this.x = x;
             this.csf = csf;
         }
         @Override
         public void actionPerformed(ActionEvent ae) {
-            discardPileButton.setIcon(img("11_" + (x + 1), 180, 270));
+            discardPileButton.setIcon(getImg("11_" + (x + 1), false, 180, 270));
             csf.dispose();
             nextPlayer();
         }
     }
 
-    public class ChooseSymbolFrame extends JFrame {
-        public ChooseSymbolFrame() {
+    public class ChooseSymbol extends JFrame {
+        public ChooseSymbol() {
             super("Choose Symbol");
             setLayout(new GridBagLayout());
             setIconImage(NewGame.this.getIconImage());
@@ -452,14 +446,14 @@ public abstract class NewGame extends JFrame {
                 jacks[x] = new JButton();
                 jacks[x].setPreferredSize(new Dimension(70, 105));
                 jacks[x].setBackground(lightBlue);
-                jacks[x].setIcon(img("11_" + (x + 1), 70, 105));
+                jacks[x].setIcon(getImg("11_" + (x + 1), false, 70, 105));
                 csPanel.add(jacks[x]);
-                jacks[x].addActionListener(new ChooseSymbol(x, this));
+                jacks[x].addActionListener(new ChooseSymbolListener(x, this));
             }
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent we) {
-                    new ChooseSymbolFrame();
+                    new ChooseSymbol();
                 }
             });
             setLocationRelativeTo(null);
