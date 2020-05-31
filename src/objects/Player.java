@@ -1,6 +1,11 @@
 package objects;
 
+import gui.NewGame;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author: Marc Schmidt
@@ -11,13 +16,17 @@ import java.util.*;
 public class Player {
 
     private List<Card> cards = new ArrayList<>();
-    private int rank = 0;
+    private List<JButton> buttons = new ArrayList<>();
 
     public Player() {
+
     }
 
     public List<Card> getCards() {
         return cards;
+    }
+    public List<JButton> getButtons() {
+        return buttons;
     }
 
     public int getPoints() {
@@ -28,30 +37,26 @@ public class Player {
         return points;
     }
 
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     public void addCard(Card c) {
         cards.add(c);
     }
 
-    public void removeCard(Card cRemove) {
-        for (Card c : cards) {
-            if (c.getName().equals(cRemove.getName())) {
-                cards.remove(c);
-                break;
-            }
-        }
+    public int removeCard(Card c) {
+        int x = cards.indexOf(c);
+        cards.remove(c);
+        return x;
+    }
+
+    public void addButton(JButton b) {
+        buttons.add(b);
+    }
+
+    public void removeButton(JButton b) {
+        buttons.remove(b);
     }
 
     public int handSize() {
         return cards.size();
     }
-
 }
 

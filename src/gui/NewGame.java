@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -21,6 +20,8 @@ public abstract class NewGame extends JFrame {
 
     protected int currentPlayer = (int)(Math.random() * 4);
     protected int cardCounter = -1;
+    boolean singlePlayer = isSinglePlayer();
+    Card discard;
 
     protected int seven = 0;
     protected boolean eight = false;
@@ -36,7 +37,7 @@ public abstract class NewGame extends JFrame {
 
     private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, discardPilePanel, extraButtonsPanel;
 
-    protected final Color lightBlue = new Color(229, 244, 255);
+    public final Color lightBlue = new Color(229, 244, 255);
     protected final Color turquoise = new Color(0, 127, 127);
     protected final Color lightYellow = new Color(255, 255, 153);
     protected final Color green = new Color(100, 255, 100);
@@ -111,7 +112,8 @@ public abstract class NewGame extends JFrame {
         discardPileButton = new JButton();
         discardPileButton.setPreferredSize(new Dimension(180, 270));
         discardPileButton.setBackground(lightBlue);
-        discardPileButton.setIcon(getImg(aCard().getName(), false, 180, 270));
+        discard = aCard();
+        discardPileButton.setIcon(getImg(discard.getName(), false, 180, 270));
         discardPileButton.setMargin(new Insets(0, 0, 0, 0));
         discardPileButton.setBorder(null);
         discardPileButton.setFocusable(false);
@@ -172,10 +174,9 @@ public abstract class NewGame extends JFrame {
                 }
             }
         }
-        players[0] = new Player();
-        players[1] = new Player();
-        players[2] = new Player();
-        players[3] = new Player();
+        for (int x = 0; x < 4; x++) {
+            players[x] = new Player();
+        }
         shuffleCards(cards);
         createHand();
     }
@@ -194,37 +195,120 @@ public abstract class NewGame extends JFrame {
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 7; y++) {
                 players[x].addCard(aCard());
+                newButton(x);
             }
             handPanel[x] = new JPanel();
-            boolean back = true;
-            if (x == currentPlayer) {
-                back = false;
-            }
-            updateHand(players[x].getCards(), x, back);
+            updateHand(x, (!singlePlayer && x != currentPlayer) || (singlePlayer && x != 0));
         }
     }
 
     public abstract void nextPlayer();
 
-    public Card whatCard(JButton b) {
-        String desc = ((ImageIcon)b.getIcon()).getDescription();
-        String[] values = desc.split("_", 2);
-        return new Card(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
-    }
+    public abstract boolean isSinglePlayer();
 
     public Card aCard() {
         cardCounter++;
         return cards[cardCounter];
     }
 
-    public ImageIcon getImg(String name, boolean back, int width, int height) {
-        String s = "cards/";
-        if (back) {
-            s = "cardsback/";
+    public boolean validCard(int number, int symbol) {
+        boolean valid = false;
+        for (Card c: players[currentPlayer].getCards()) {
+            if (c.getSymbol() == symbol || c.getNumber() == number) {
+                valid = true;
+                break;
+            } else if (c.getNumber() == 11 && symbol != 0) {
+                valid = true;
+                break;
+            }
         }
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/" + s + name + ".png"));
+        return valid;
+    }
+
+    public void isTschauOrSepp() {
+        if (tschau || sepp) {
+            int amount;
+            if (tschau) {
+                amount = 2;
+                tschau = false;
+            } else {
+                amount = 4;
+                sepp = false;
+            }
+            for (int x = 0; x < amount; x++) {
+                players[lastPlayer].addCard(aCard());
+                newButton(lastPlayer);
+            }
+            drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
+            updateHand(lastPlayer, !singlePlayer || lastPlayer != 0);
+        }
+    }
+
+    public void whosNext() {
+        if (ten == 1) {
+            if (currentPlayer == 3) {
+                currentPlayer = 0;
+            } else {
+                currentPlayer++;
+            }
+        } else {
+            if (currentPlayer == 0) {
+                currentPlayer = 3;
+            } else {
+                currentPlayer--;
+            }
+        }
+    }
+
+    public void newButton(int p) {
+        JButton b = new JButton();
+        b.setPreferredSize(new Dimension(70, 105));
+        b.setBackground(lightBlue);
+        b.addActionListener(new PlayCardListener(p));
+        players[p].addButton(b);
+    }
+
+    public void updateHand(int player, boolean back) {
+        handPanel[player].removeAll();
+        handPanel[player].setBackground(lightBlue);
+        //
+        if (player % 2 == 0) { //Spieler oben oder unten -> 7 Karten -> 7x1
+            handPanel[player].setSize(players[player].handSize() * 75 - 5, 105);
+            handPanel[player].setLayout(new GridLayout(1, players[player].handSize(), 5, 5));
+            for (int x = 0; x < players[player].handSize(); x++) {
+                players[player].getButtons().get(x).setActionCommand(x + "");
+                players[player].getButtons().get(x).setIcon(getImg(players[player].getCards().get(x).getName(), back, 70, 105));
+                handPanel[player].add(players[player].getButtons().get(x));
+            }
+        } else { //Spieler links oder rechts -> 7 Karten -> 2x4
+            handPanel[player].setSize(145, ((players[player].handSize() + 1) / 2) * 110 - 5);
+            handPanel[player].setLayout(new GridLayout(((players[player].handSize() + 1) / 2), 2, 5, 5));
+            for (int x = 0; x < players[player].handSize(); x++) {
+                players[player].getButtons().get(x).setActionCommand(x + "");
+                players[player].getButtons().get(x).setIcon(getImg(players[player].getCards().get(x).getName(), back, 70, 105));
+                if (player == 1 && players[player].handSize() % 2 == 1 && (x + 1) == players[player].handSize()) {
+                    JButton emptyButton = new JButton();
+                    emptyButton.setBackground(lightBlue);
+                    emptyButton.setFocusable(false);
+                    emptyButton.setEnabled(false);
+                    emptyButton.setBorder(null);
+                    handPanel[player].add(emptyButton);
+                }
+                handPanel[player].add(players[player].getButtons().get(x));
+            }
+        }
+        //
+        handPanel[player].revalidate();
+        handPanel[player].repaint();
+    }
+
+    public ImageIcon getImg(String name, boolean back, int width, int height) {
+        if (back) {
+            name = "back";
+        }
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/resources/cards/" + name + ".png"));
         Image img = icon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
-        return new ImageIcon(img, name);
+        return new ImageIcon(img);
     }
 
     public JPanel createPanel(JPanel panel, Color color, int width, int height) {
@@ -247,102 +331,8 @@ public abstract class NewGame extends JFrame {
         return gbc;
     }
 
-    public boolean validCard(Card played) {
-        boolean valid = false;
-        for (Card c: players[currentPlayer].getCards()) {
-            if (c.getSymbol() == played.getSymbol() || c.getNumber() == played.getNumber()) {
-                valid = true;
-                break;
-            } else if (c.getNumber() == 11 && played.getSymbol() != 0) {
-                valid = true;
-                break;
-            }
-        }
-        return valid;
-    }
-
-    public void isTschauOrSepp() {
-        if (tschau || sepp) {
-            int amount;
-            if (tschau) {
-                amount = 2;
-                tschau = false;
-            } else {
-                amount = 4;
-                sepp = false;
-            }
-            for (int x = 0; x < amount; x++) {
-                players[lastPlayer].addCard(aCard());
-            }
-            drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
-            updateHand(players[lastPlayer].getCards(), lastPlayer, true);
-        }
-    }
-
-    public void whosNext() {
-        if (ten == 1) {
-            if (currentPlayer == 3) {
-                currentPlayer = 0;
-            } else {
-                currentPlayer++;
-            }
-        } else {
-            if (currentPlayer == 0) {
-                currentPlayer = 3;
-            } else {
-                currentPlayer--;
-            }
-        }
-    }
-
-    public void updateHand(List<Card> cards, int player, boolean back) {
-        handPanel[player].removeAll();
-        handPanel[player].setBackground(lightBlue);
-        //
-        if (player % 2 == 0) { //Spieler oben oder unten -> 7 Karten -> 7x1
-            handPanel[player].setSize(cards.size() * 75 - 5, 105);
-            handPanel[player].setLayout(new GridLayout(1, cards.size(), 5, 5));
-            JButton[] button = new JButton[cards.size()];
-            int x = 0;
-            for (Card card : cards) {
-                button[x] = new JButton();
-                button[x].setPreferredSize(new Dimension(70, 105));
-                button[x].setBackground(lightBlue);
-                button[x].setIcon(getImg(card.getName(), back, 70, 105));
-                handPanel[player].add(button[x]);
-                button[x].addActionListener(new PlayCardListener(player));
-                x++;
-            }
-        } else { //Spieler links oder rechts -> 7 Karten -> 2x4
-            handPanel[player].setSize(145, ((cards.size() + 1) / 2) * 110 - 5);
-            handPanel[player].setLayout(new GridLayout(((cards.size() + 1) / 2), 2, 5, 5));
-            int x = 0;
-            JButton[] button = new JButton[cards.size()];
-            for (Card card : cards) {
-                button[x] = new JButton();
-                button[x].setPreferredSize(new Dimension(70, 105));
-                button[x].setBackground(lightBlue);
-                button[x].setIcon(getImg(card.getName(), back, 70, 105));
-                if (player == 1 && cards.size() % 2 == 1 && (x + 1) == cards.size()) {
-                    JButton emptyButton = new JButton();
-                    emptyButton.setBackground(lightBlue);
-                    emptyButton.setFocusable(false);
-                    emptyButton.setEnabled(false);
-                    emptyButton.setBorder(null);
-                    handPanel[player].add(emptyButton);
-                }
-                handPanel[player].add(button[x]);
-                button[x].addActionListener(new PlayCardListener(player));
-                x++;
-            }
-        }
-        //
-        handPanel[player].revalidate();
-        handPanel[player].repaint();
-    }
-
     //LISTENERS: -----------------------------------------------------------------------------------
-    class PlayCardListener implements ActionListener {
+    public class PlayCardListener implements ActionListener {
 
         int player;
         public PlayCardListener(int player) { this.player = player; }
@@ -350,17 +340,17 @@ public abstract class NewGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent ae) {
             if (currentPlayer == player) {
-                Card clicked = whatCard((JButton)ae.getSource());
+                Card clicked = players[currentPlayer].getCards().get((Integer.parseInt(ae.getActionCommand())));
                 Card played;
                 if (seven != 0) {
                     played = new Card(7, 0);
                 } else {
-                    played = whatCard(discardPileButton);
+                    played = discard;
                 }
                 if (clicked.getNumber() == 11) {
                     isTschauOrSepp();
                     if (ace) { ace = false; }
-                    players[currentPlayer].removeCard(clicked);
+                    players[currentPlayer].removeButton(players[currentPlayer].getButtons().get(players[currentPlayer].removeCard(clicked)));
                     new ChooseSymbol();
                 } else {
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
@@ -368,7 +358,8 @@ public abstract class NewGame extends JFrame {
                         if (ace) { ace = false; }
                         System.out.println("Correct Card");
                         discardPileButton.setIcon(getImg(clicked.getName(), false, 180, 270));
-                        players[currentPlayer].removeCard(clicked);
+                        discard = clicked;
+                        players[currentPlayer].removeButton(players[currentPlayer].getButtons().get(players[currentPlayer].removeCard(clicked)));
                         if (clicked.getNumber() == 10) {
                             ten = 3 - ten;
                         } else if (clicked.getNumber() == 8) {
@@ -387,7 +378,7 @@ public abstract class NewGame extends JFrame {
                 System.out.println("Error: Wrong Player");
                 playerLabel[currentPlayer].setBackground(darkRed);
                 playerLabel[currentPlayer].setForeground(Color.WHITE);
-                wrongPlayer.start();
+                wrongPlayer.restart();
             }
         }
     }
@@ -395,17 +386,17 @@ public abstract class NewGame extends JFrame {
     class DrawCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Card played = whatCard(discardPileButton);
-            if (!validCard(played)) {
+            if (!validCard(discard.getNumber(), discard.getSymbol())) {
                 isTschauOrSepp();
                 players[currentPlayer].addCard(aCard());
+                newButton(currentPlayer);
                 drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
                 System.out.println("Card received");
-                if (!validCard(played)) {
-                    updateHand(players[currentPlayer].getCards(), currentPlayer, true);
+                if (!validCard(discard.getNumber(), discard.getSymbol())) {
+                    updateHand(currentPlayer, !singlePlayer || currentPlayer != 0);
                     nextPlayer();
                 } else {
-                    updateHand(players[currentPlayer].getCards(), currentPlayer, false);
+                    updateHand(currentPlayer, singlePlayer && currentPlayer != 0);
                 }
             } else {
                 System.out.println("Error: Player has valid Card");
@@ -422,13 +413,14 @@ public abstract class NewGame extends JFrame {
         }
         @Override
         public void actionPerformed(ActionEvent ae) {
-            discardPileButton.setIcon(getImg("11_" + (x + 1), false, 180, 270));
+            discard = new Card(11, (x + 1));
+            discardPileButton.setIcon(getImg(discard.getName(), false, 180, 270));
             csf.dispose();
             nextPlayer();
         }
     }
 
-    public class ChooseSymbol extends JFrame {
+    class ChooseSymbol extends JFrame {
         public ChooseSymbol() {
             super("Choose Symbol");
             setLayout(new GridBagLayout());

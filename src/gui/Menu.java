@@ -56,7 +56,7 @@ public class Menu extends JFrame {
         singleplayerButton.addMouseListener(new HoverListener());
         singleplayerButton.addActionListener(ae -> {
             System.out.println("Singleplayer Game started");
-            new SingleplayerGame();
+            new Singleplayer();
             dispose();
         });
         add(singleplayerButton, c(15, 5, 5, 5, 0, 1));
@@ -70,7 +70,7 @@ public class Menu extends JFrame {
         multiplayerButton.addMouseListener(new HoverListener());
         multiplayerButton.addActionListener(ae -> {
             System.out.println("Multiplayer Game started");
-            new MultiplayerGame();
+            new Multiplayer();
             dispose();
         });
         add(multiplayerButton, c(10, 10, 5, 5, 0, 2));
