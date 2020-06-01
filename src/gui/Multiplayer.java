@@ -51,4 +51,10 @@ public class Multiplayer extends NewGame {
     public boolean isSinglePlayer() {
         return false;
     }
+
+    public int whoStarts() {
+        return (int)(Math.random() * 4);
+    }
+
+    public void doAlgorithm() {}
 }

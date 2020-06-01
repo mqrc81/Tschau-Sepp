@@ -1,3 +1,5 @@
+package app;
+
 import gui.Menu;
 
 /**
