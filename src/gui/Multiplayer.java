@@ -1,21 +1,26 @@
 package gui;
 
-import objects.Card;
-
 /**
+ * main "Game Table" window, specifically for "Multiplayer" gamemode
+ *
  * @author: Marc Schmidt
  * @date: 2020-05-14
  * @project: M326
  */
-
 public class Multiplayer extends NewGame {
 
+    /**
+     * constructor method
+     */
     public Multiplayer() {
         setTitle("Multiplayer | Tschau Sepp Premium");
         playerLabel[currentPlayer].setBackground(green);
         System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
 
+    /**
+     * everything that happens in between two players' moves
+     */
     public void nextPlayer() {
         wrongPlayer.stop();
         if (players[currentPlayer].handSize() == 0) {
@@ -48,10 +53,16 @@ public class Multiplayer extends NewGame {
         playerLabel[currentPlayer].setBackground(green);
     }
 
+    /**
+     * @return gamemode being played (true = "Singleplayer")
+     */
     public boolean isSinglePlayer() {
         return false;
     }
 
+    /**
+     * @return starting player (0 in case of "Singleplayer")
+     */
     public int whoStarts() {
         return (int)(Math.random() * 4);
     }

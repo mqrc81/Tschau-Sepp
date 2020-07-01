@@ -7,11 +7,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * "Game Over" window after a player won the game
+ *
  * @author: Marc Schmidt
  * @date: 2020-05-29
  * @project: M326
  */
-
 public class GameOver extends JFrame {
 
     private JLabel[] labels = new JLabel[4];
@@ -24,8 +25,14 @@ public class GameOver extends JFrame {
     private final Color purple = new Color(178, 0, 255);
     private final Color gold = new Color(218,165,32);
     private final Font font = new Font("Dubai Medium", Font.PLAIN, 16);
-    GridBagConstraints gbc = new GridBagConstraints();
+    private GridBagConstraints gbc = new GridBagConstraints();
 
+    /**
+     * constructor method
+     *
+     * @param players players involved in the game
+     * @param ng this class
+     */
     public GameOver(Player[] players, NewGame ng) {
         super("Congratulations!");
         getContentPane().setBackground(lightBlue);
@@ -88,7 +95,7 @@ public class GameOver extends JFrame {
         gbc.insets.bottom = 20;
         add(menuButton, gbc);
 
-        blinkTimer.start();
+        blinkTimer. start();
 
         //Basics:
         setLocationRelativeTo(null);
@@ -97,6 +104,9 @@ public class GameOver extends JFrame {
         pack();
     }
 
+    /**
+     * Listener that changes color of button when mouse hovers over it
+     */
     class HoverListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent me) {}
@@ -114,6 +124,9 @@ public class GameOver extends JFrame {
         }
     }
 
+    /**
+     * Timer that constantly changes color of winner announcement
+     */
     Timer blinkTimer = new Timer(500, ae -> {
         if (blink) {
             labels[0].setForeground(gold);

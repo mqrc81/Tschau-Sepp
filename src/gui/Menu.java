@@ -5,11 +5,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
+ * "Menu" window, in which the user can start a new game
+ *
  * @author: Marc Schmidt
  * @date: 2020-05-14
  * @project: M326
  */
-
 public class Menu extends JFrame {
 
     private final Color lightBlue = new Color(229, 244, 255);
@@ -18,12 +19,18 @@ public class Menu extends JFrame {
     private final Font font = new Font("Dubai Medium", Font.PLAIN, 14);
     private final GridBagConstraints gbc = new GridBagConstraints();
 
+    /**
+     * constructor method
+     */
     public Menu () {
         super("Menu | Tschau Sepp Premium");
         gui();
         setVisible(true);
     }
 
+    /**
+     * creates GUI
+     */
     public void gui() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -76,17 +83,39 @@ public class Menu extends JFrame {
         add(multiplayerButton, c(10, 10, 5, 5, 0, 2));
     }
 
+    /**
+     * sets GridBagConstraints
+     *
+     * @param x gridx
+     * @param y gridy
+     * @return GridBagConstraints
+     */
     public GridBagConstraints c(int x, int y) {
         gbc.gridy = y;
         return gbc;
     }
 
-    public GridBagConstraints c(int top, int bottom, int left, int right, int gridx, int gridy) {
+    /**
+     * sets GridBagConstraints
+     *
+     * @param top top of insets
+     * @param bottom bottom of insets
+     * @param left left of insets
+     * @param right right of insets
+     * @param x gridx
+     * @param y gridy
+     * @return GridBagConstraints
+     */
+    public GridBagConstraints c(int top, int bottom, int left, int right, int x, int y) {
         gbc.insets = new Insets(top, left, bottom, right);
-        gbc.gridy = gridy;
+        gbc.gridx = x;
+        gbc.gridy = y;
         return gbc;
     }
 
+    /**
+     * Listener that changes color of button when mouse hovers over it
+     */
     class HoverListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent me) {}

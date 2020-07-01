@@ -10,11 +10,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * main "Game Table" window, where all cards and players are displayed and interact
+ *
  * @author: Marc Schmidt
  * @date: 2020-05-14
  * @project: M326
  */
-
 public abstract class NewGame extends JFrame {
     protected final Card[] cards = new Card[104];
     protected final Player[] players = new Player[4];
@@ -47,12 +48,18 @@ public abstract class NewGame extends JFrame {
     protected final Font font = new Font("Dubai Medium", Font.PLAIN, 24);
     protected GridBagConstraints gbc = new GridBagConstraints();
 
+    /**
+     * constructor method
+     */
     public NewGame() {
         gui1();
         createGame();
         gui2();
     }
 
+    /**
+     * creates GUI, before game, including cards and players, gets created
+     */
     public void gui1() {
         //BASICS: -----------------------------------------------------------------------------------
         setSize(1200, 1000);
@@ -83,6 +90,9 @@ public abstract class NewGame extends JFrame {
         centerCenterPanel.add(createPanel(discardPilePanel, lightBlue, 820, 410), c(0, 0));
     }
 
+    /**
+     * creates GUI, after game, including cards and players, gets created
+     */
     public void gui2() {
         //COMPONENTS: -----------------------------------------------------------------------------------
         tschauButton = new JButton("Tschau");
@@ -165,6 +175,9 @@ public abstract class NewGame extends JFrame {
         pack();
     }
 
+    /**
+     * creates game, including cards and players
+     */
     public void createGame() {
         int y = 0;
         for (int x = 0; x < 2; x++) {
@@ -178,11 +191,14 @@ public abstract class NewGame extends JFrame {
         for (int x = 0; x < 4; x++) {
             players[x] = new Player();
         }
-        shuffleCards(cards);
+        shuffleCards();
         createHand();
     }
 
-    public void shuffleCards(Card[] cards) {
+    /**
+     * shuffles cards randomly within array
+     */
+    public void shuffleCards() {
         Random rnd = new Random();
         for (int x = cards.length - 1; x > 0; x--) {
             int y = rnd.nextInt(x + 1);
@@ -192,6 +208,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * distributes 7 random cards to each player
+     */
     public void createHand() {
         for (int x = 0; x < 4; x++) {
             System.out.println("Player " + (x + 1));
@@ -202,6 +221,8 @@ public abstract class NewGame extends JFrame {
                 newButton(x);
             }
             handPanel[x] = new JPanel();
+        }
+        for (int x = 0; x < 4; x++) {
             updateHand(x, (!singlePlayer && x != currentPlayer) || (singlePlayer && x != 0));
         }
     }
@@ -214,11 +235,23 @@ public abstract class NewGame extends JFrame {
 
     public abstract void doAlgorithm();
 
+    /**
+     * next card in array
+     *
+     * @return next card
+     */
     public Card aCard() {
         cardCounter++;
         return cards[cardCounter];
     }
 
+    /**
+     * checks whether current player has a matching card in hand
+     *
+     * @param number number (value) of card to be compared
+     * @param symbol symbol (color) of card to be compared
+     * @return boolean, whether player has matching card
+     */
     public boolean validCard(int number, int symbol) {
         boolean valid = false;
         for (Card c: players[currentPlayer].getCards()) {
@@ -233,6 +266,9 @@ public abstract class NewGame extends JFrame {
         return valid;
     }
 
+    /**
+     * checks whether a player should have said "Tschau" or "Sepp" and gives the player penalty cards
+     */
     public void isTschauOrSepp() {
         if (tschau || sepp) {
             int amount;
@@ -252,6 +288,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * determines who the next player in line is
+     */
     public void whosNext() {
         if (ten == 1) {
             if (currentPlayer == 3) {
@@ -268,6 +307,11 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * whenever a new card is added to a player's hand, this method creates a new button correspondingly
+     *
+     * @param p affected player
+     */
     public void newButton(int p) {
         JButton b = new JButton();
         b.setPreferredSize(new Dimension(70, 105));
@@ -322,6 +366,15 @@ public abstract class NewGame extends JFrame {
         handPanel[player].repaint();
     }
 
+    /**
+     * returns an image from the "resources" folder corresponding to the respective card
+     *
+     * @param name name of the card (e.g. 2_4 = 2 of Diamonds)
+     * @param back boolean, whether image should be backside or front of a card
+     * @param width width the card should be displayed as
+     * @param height height the card shuld be displayed as
+     * @return image/icon of the card
+     */
     public ImageIcon getImg(String name, boolean back, int width, int height) {
         if (back) {
             name = "back";
@@ -331,12 +384,28 @@ public abstract class NewGame extends JFrame {
         return new ImageIcon(img);
     }
 
+    /**
+     * sets a JPanel
+     *
+     * @param panel panel created
+     * @param color color of panel
+     * @param width width of panel
+     * @param height height of panel
+     * @return JPanel
+     */
     public JPanel createPanel(JPanel panel, Color color, int width, int height) {
         panel.setBackground(color);
         panel.setPreferredSize(new Dimension(width, height));
         return panel;
     }
 
+    /**
+     * sets GridBagConstraints, when insets should all be 0
+     *
+     * @param x gridx
+     * @param y gridy
+     * @return GridBagConstraints
+     */
     public GridBagConstraints c(int x, int y) {
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.gridx = x;
@@ -344,6 +413,17 @@ public abstract class NewGame extends JFrame {
         return gbc;
     }
 
+    /**
+     * sets GridBagConstraints
+     *
+     * @param top top insets
+     * @param bottom bottom insets
+     * @param left left insets
+     * @param right right insets
+     * @param gridx gridx
+     * @param gridy gridy
+     * @return GridBagConstraints
+     */
     public GridBagConstraints c(int top, int bottom, int left, int right, int gridx, int gridy) {
         gbc.insets = new Insets(top, left, bottom, right);
         gbc.gridx = gridx;
@@ -352,7 +432,10 @@ public abstract class NewGame extends JFrame {
     }
 
     //LISTENERS: -----------------------------------------------------------------------------------
-    public class PlayCardListener implements ActionListener {
+    /**
+     * Listener for when a player attempts to play a card
+     */
+    class PlayCardListener implements ActionListener {
 
         int player;
         public PlayCardListener(int player) { this.player = player; }
@@ -403,6 +486,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * Listener for when a player attempts to draw a card
+     */
     class DrawCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -427,6 +513,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * Listener for when a player chooses a symbol for their Jack
+     */
     class ChooseJackListener implements ActionListener {
         ChooseJack csf;
         int x;
@@ -443,6 +532,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * Dialog, where the player can choose a symbol (color) for the Jack they just played
+     */
     class ChooseJack extends JDialog {
         public ChooseJack() {
             setTitle("Choose Symbol");
@@ -499,6 +591,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * Listener for JButton "tschau"
+     */
     class TschauListener implements ActionListener {
 
         @Override
@@ -512,6 +607,9 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * Listener for JButton "sepp"
+     */
     class SeppListener implements ActionListener {
 
         @Override
@@ -529,7 +627,11 @@ public abstract class NewGame extends JFrame {
         }
     }
 
-    Timer wrongPlayer = new Timer(1000, ae -> {
+    /**
+     * Timer that makes player label of current player light up red for 0.5 seconds when a player attempts to play/draw a card, even though it's
+     * not their turn
+     */
+    Timer wrongPlayer = new Timer(500, ae -> {
         playerLabel[currentPlayer].setBackground(green);
         playerLabel[currentPlayer].setForeground(Color.BLACK);
     });
