@@ -40,7 +40,6 @@ public abstract class NewGame extends JFrame {
     private JPanel topPanel, bottomPanel, leftPanel, rightPanel, centerPanel, discardPilePanel, extraButtonsPanel;
 
     public final Color lightBlue = new Color(229, 244, 255);
-    protected final Color turquoise = new Color(0, 127, 127);
     protected final Color lightYellow = new Color(255, 255, 153);
     protected final Color green = new Color(100, 255, 100);
     protected final Color lightRed = new Color(255, 153, 153);
@@ -77,8 +76,9 @@ public abstract class NewGame extends JFrame {
         bottomPanel = new JPanel(new GridBagLayout());
         add(createPanel(bottomPanel, lightBlue, 1200, 180), c(0, 2));
         //
-        leftPanel = new JPanel(new BorderLayout());
-        centerPanel.add(createPanel(leftPanel, lightBlue, 190, 640), c(0, 0));
+        leftPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        leftPanel = createPanel(leftPanel, lightBlue, 190, 640);
+        centerPanel.add(leftPanel, c(0, 0));
         JPanel centerCenterPanel = new JPanel(new GridBagLayout());
         centerPanel.add(createPanel(centerCenterPanel, lightBlue, 820, 640), c(1, 0));
         rightPanel = new JPanel(new BorderLayout());
@@ -150,14 +150,22 @@ public abstract class NewGame extends JFrame {
         bottomLabelsPanel.add(playerLabel[0], c(0, 0));
         bottomPanel.add(bottomLabelsPanel, c(0, 10, 0, 0, 0, 0));
         bottomPanel.add(handPanel[0], c(0, 10, 0, 0, 0, 1));
-        JPanel leftPanel2 = new JPanel(new GridBagLayout());
+        JPanel leftPanel2 = new JPanel(new FlowLayout(FlowLayout.LEADING));
         leftPanel2.setBackground(lightBlue);
-        leftPanel2.add(handPanel[3], c(5, 0, 0, 0, 0, 0));
-        leftPanel.add(leftPanel2, BorderLayout.NORTH);
-        JPanel rightPanel2 = new JPanel(new GridBagLayout());
+        leftPanel2.add(handPanel[3]);
+        JScrollPane leftScrollPane = new JScrollPane(leftPanel2);
+        leftScrollPane.setPreferredSize(new Dimension(190, 640));
+        leftScrollPane.setBorder(null);
+        leftScrollPane.setBackground(lightBlue);
+        leftPanel.add(leftScrollPane);
+        JPanel rightPanel2 = new JPanel(new FlowLayout(FlowLayout.LEADING));
         rightPanel2.setBackground(lightBlue);
         rightPanel2.add(handPanel[1], c(5, 0, 0, 0, 0, 0));
-        rightPanel.add(rightPanel2, BorderLayout.NORTH);
+        JScrollPane rightScrollPane = new JScrollPane(rightPanel2);
+        rightScrollPane.setPreferredSize(new Dimension(190, 640));
+        rightScrollPane.setBorder(null);
+        rightScrollPane.setBackground(lightBlue);
+        rightPanel.add(rightScrollPane);
 
         //LISTENERS: -----------------------------------------------------------------------------------
         addWindowListener(new WindowAdapter() {
@@ -227,12 +235,28 @@ public abstract class NewGame extends JFrame {
         }
     }
 
+    /**
+     * everything that happens in between two players' moves
+     */
     public abstract void nextPlayer();
 
+    /**
+     * determines gamemode being played
+     *
+     * @return gamemode being played (true = "Singleplayer")
+     */
     public abstract boolean isSinglePlayer();
 
+    /**
+     * determines starting player
+     *
+     * @return starting player
+     */
     public abstract int whoStarts();
 
+    /**
+     * evaluates, what the CPU's next move (play/draw card) will be in "Singleplayer" gamemode
+     */
     public abstract void doAlgorithm();
 
     /**

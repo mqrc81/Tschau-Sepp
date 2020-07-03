@@ -54,6 +54,8 @@ public class Multiplayer extends NewGame {
     }
 
     /**
+     * determines gamemode being played
+     *
      * @return gamemode being played (true = "Singleplayer")
      */
     public boolean isSinglePlayer() {
@@ -61,7 +63,9 @@ public class Multiplayer extends NewGame {
     }
 
     /**
-     * @return starting player (0 in case of "Singleplayer")
+     * determines starting player
+     *
+     * @return random starting player
      */
     public int whoStarts() {
         return (int)(Math.random() * 4);

@@ -115,6 +115,8 @@ public class Singleplayer extends NewGame {
     }
 
     /**
+     * determines gamemode being played
+     *
      * @return gamemode being played (true = "Singleplayer")
      */
     public boolean isSinglePlayer() {
@@ -122,6 +124,8 @@ public class Singleplayer extends NewGame {
     }
 
     /**
+     * determines starting player
+     *
      * @return starting player (0 in case of "Singleplayer")
      */
     public int whoStarts() {
