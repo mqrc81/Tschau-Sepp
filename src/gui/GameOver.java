@@ -10,8 +10,7 @@ import java.awt.event.*;
  * "Game Over" window after a player won the game
  *
  * @author: Marc Schmidt
- * @date: 2020-05-29
- * @project: M326
+ * @since: 2020-05-29
  */
 public class GameOver extends JFrame {
 
@@ -43,11 +42,12 @@ public class GameOver extends JFrame {
         gbc.insets = new Insets(0, 0, 5, 0);
         gbc.gridy = 0;
         ng.dispose();
-        //
+        //rank array with points of each player's combined cards
         int[] rank = new int[4];
         for (int x = 0; x < 4; x++) {
             rank[x] = players[x].getPoints();
         }
+        //sorts the players by points in ascending order using BubbleSort
         for (int x = 4; x > 1; x--) {
             for (int y = 0; y < x - 1; y++) {
                 if (rank[y] > rank[y + 1]) {
@@ -57,6 +57,7 @@ public class GameOver extends JFrame {
                 }
             }
         }
+        //creates JLabel for each player displaying rank and points
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
                 if (players[y].getPoints() == rank[x]) {
@@ -78,7 +79,6 @@ public class GameOver extends JFrame {
                 }
             }
         }
-
         JButton menuButton = new JButton("Return to Menu");
         menuButton.setBackground(darkRed);
         menuButton.setForeground(Color.WHITE);

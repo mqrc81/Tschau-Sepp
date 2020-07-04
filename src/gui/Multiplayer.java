@@ -4,8 +4,7 @@ package gui;
  * main "Game Table" window, specifically for "Multiplayer" gamemode
  *
  * @author: Marc Schmidt
- * @date: 2020-05-14
- * @project: M326
+ * @since: 2020-05-14
  */
 public class Multiplayer extends NewGame {
 
@@ -32,14 +31,16 @@ public class Multiplayer extends NewGame {
         }
         updateHand(currentPlayer, !singlePlayer || currentPlayer != 0);
         playerLabel[currentPlayer].setBackground(lightYellow);
+        //if Ace got played, it doesn't move on to the next player because it's still the same player's turn
         if (!ace) {
             whosNext();
-            System.out.println("Player " + (currentPlayer + 1) + "'s turn");
         }
+        //if 8 got played, it skips a turn
         if (eight) {
             whosNext();
             eight = false;
         } else if (seven != 0) {
+            //if player has a 7, he can (and has to) respond with the 7 instead of receiving penalty cards
             if(!validCard(7, 0)) {
                 while (seven > 0) {
                     players[currentPlayer].addCard(aCard());

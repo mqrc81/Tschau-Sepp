@@ -4,8 +4,7 @@ package objects;
  * a instance of card, consisting of number, symbol and points
  *
  * @author: Marc Schmidt
- * @date: 2020-05-14
- * @project: M326
+ * @since: 2020-05-14
  */
 public class Card {
     private final int number; //11: Jack | 12: Queen | 13: King | 14: Ace
@@ -46,6 +45,7 @@ public class Card {
      * @return name
      */
     public String getName() {
+        //used for card image
         return number + "_" + symbol;
     }
 

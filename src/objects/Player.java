@@ -8,8 +8,7 @@ import java.util.List;
  * a instance of player, which has a set of cards and corresponding buttons
  *
  * @author: Marc Schmidt
- * @date: 2020-05-14
- * @project: M326
+ * @since: 2020-05-14
  */
 public class Player {
 
@@ -56,7 +55,7 @@ public class Player {
     }
 
     /**
-     * remove card from player's hand and returns card's index
+     * remove card from player's hand and returns card's index, in order to remove corresponding button
      *
      * @param c card to be removed
      * @return index of card in array

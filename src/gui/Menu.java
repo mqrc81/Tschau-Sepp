@@ -8,8 +8,7 @@ import java.awt.event.*;
  * "Menu" window, in which the user can start a new game
  *
  * @author: Marc Schmidt
- * @date: 2020-05-14
- * @project: M326
+ * @since: 2020-05-14
  */
 public class Menu extends JFrame {
 

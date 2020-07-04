@@ -13,8 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * main "Game Table" window, where all cards and players are displayed and interact
  *
  * @author: Marc Schmidt
- * @date: 2020-05-14
- * @project: M326
+ * @since: 2020-05-14
  */
 public abstract class NewGame extends JFrame {
     protected final Card[] cards = new Card[104];
@@ -168,6 +167,7 @@ public abstract class NewGame extends JFrame {
         rightPanel.add(rightScrollPane);
 
         //LISTENERS: -----------------------------------------------------------------------------------
+        //makes sure that the "Menu" appears, when game window gets closed via [X]
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
@@ -207,6 +207,7 @@ public abstract class NewGame extends JFrame {
      * shuffles cards randomly within array
      */
     public void shuffleCards() {
+        //shuffling via Fisher-Yates-Algorithm
         Random rnd = new Random();
         for (int x = cards.length - 1; x > 0; x--) {
             int y = rnd.nextInt(x + 1);
@@ -221,16 +222,15 @@ public abstract class NewGame extends JFrame {
      */
     public void createHand() {
         for (int x = 0; x < 4; x++) {
-            System.out.println("Player " + (x + 1));
             for (int y = 0; y < 7; y++) {
                 Card c = aCard();
-                System.out.println("\t" + (x + 1) + ": [" + c.getNumber() + ", " + c.getSymbol() + "]");
                 players[x].addCard(c);
                 newButton(x);
             }
             handPanel[x] = new JPanel();
         }
         for (int x = 0; x < 4; x++) {
+            //if multiplayer and not starting player -> display cards backside; else if singleplayer and not "Player 1" -> display cards backside
             updateHand(x, (!singlePlayer && x != currentPlayer) || (singlePlayer && x != 0));
         }
     }
@@ -347,8 +347,8 @@ public abstract class NewGame extends JFrame {
     public void updateHand(int player, boolean back) {
         handPanel[player].removeAll();
         handPanel[player].setBackground(lightBlue);
-        //
-        if (player % 2 == 0) { //Spieler oben oder unten -> 7 Karten -> 7x1
+        //For player on top or bottom:
+        if (player % 2 == 0) {
             if (players[currentPlayer].handSize() == 0) {
                 handPanel[player].setSize(75, 105);
                 handPanel[player].setLayout(new GridLayout(1, 1, 5, 5));
@@ -360,6 +360,7 @@ public abstract class NewGame extends JFrame {
                 emptyButton.setBorder(null);
                 handPanel[player].add(emptyButton);
             } else {
+                //Example: 7 cards -> 7x1 grid
                 handPanel[player].setSize(players[player].handSize() * 75 - 5, 105);
                 handPanel[player].setLayout(new GridLayout(1, players[player].handSize(), 5, 5));
                 for (int x = 0; x < players[player].handSize(); x++) {
@@ -368,12 +369,15 @@ public abstract class NewGame extends JFrame {
                     handPanel[player].add(players[player].getButtons().get(x));
                 }
             }
-        } else { //Spieler links oder rechts -> 7 Karten -> 2x4
+            //For player left or right:
+        } else {
+            //Example: 7 cards -> 2x4 grid
             handPanel[player].setSize(145, ((players[player].handSize() + 1) / 2) * 110 - 5);
             handPanel[player].setLayout(new GridLayout(((players[player].handSize() + 1) / 2), 2, 5, 5));
             for (int x = 0; x < players[player].handSize(); x++) {
                 players[player].getButtons().get(x).setActionCommand(x + "");
                 players[player].getButtons().get(x).setIcon(getImg(players[player].getCards().get(x).getName(), back, 70, 105));
+                //creates empty button if needed, so grid is mirrored for player on right
                 if (player == 1 && players[player].handSize() % 2 == 1 && (x + 1) == players[player].handSize()) {
                     JButton emptyButton = new JButton();
                     emptyButton.setBackground(lightBlue);
@@ -470,24 +474,28 @@ public abstract class NewGame extends JFrame {
                 Card clicked = players[currentPlayer].getCards().get(Integer.parseInt(ae.getActionCommand()));
                 Card played;
                 if (seven != 0) {
+                    //if 7 is played, player has to respond with a 7 (or draw penalty cards). Other "matching" cards aren't allowed
                     played = new Card(7, 0);
                 } else {
                     played = discard;
                 }
+                //11 = Jack
                 if (clicked.getNumber() == 11) {
                     isTschauOrSepp();
                     if (ace) { ace = false; }
                     players[currentPlayer].removeButton(players[currentPlayer].getButtons().get(players[currentPlayer].removeCard(clicked)));
+                    //JDialog to pick symbol of Jack appears
                     new ChooseJack();
                 } else {
+                    //check if card matches
                     if (clicked.getSymbol() == played.getSymbol() || clicked.getNumber() == played.getNumber()) {
                         isTschauOrSepp();
                         if (ace) { ace = false; }
-                        System.out.println("Correct Card");
                         discardPileButton.setIcon(getImg(clicked.getName(), false, 180, 270));
                         discard = clicked;
                         players[currentPlayer].removeButton(players[currentPlayer].getButtons().get(players[currentPlayer].removeCard(clicked)));
                         if (clicked.getNumber() == 10) {
+                            //changing between 1 and 2 (1 = counter-clockwise)
                             ten = 3 - ten;
                         } else if (clicked.getNumber() == 8) {
                             eight = true;
@@ -502,7 +510,7 @@ public abstract class NewGame extends JFrame {
                     }
                 }
             } else {
-                System.out.println("Error: Wrong Player");
+                //wrong player attempted to play a card
                 playerLabel[currentPlayer].setBackground(darkRed);
                 playerLabel[currentPlayer].setForeground(Color.WHITE);
                 wrongPlayer.restart();
@@ -516,12 +524,14 @@ public abstract class NewGame extends JFrame {
     class DrawCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent ae) {
+            //if player doesn't have a valid card in hand
             if (!validCard(discard.getNumber(), discard.getSymbol())) {
                 isTschauOrSepp();
                 players[currentPlayer].addCard(aCard());
                 newButton(currentPlayer);
                 drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
                 System.out.println("Card received");
+                //if the newly received card is valid, it's the player's turn once again, else it's the next player's turn
                 if (!validCard(discard.getNumber(), discard.getSymbol())) {
                     updateHand(currentPlayer, !singlePlayer || currentPlayer != 0);
                     nextPlayer();
@@ -531,8 +541,6 @@ public abstract class NewGame extends JFrame {
                         doAlgorithm();
                     }
                 }
-            } else {
-                System.out.println("Error: Player has valid Card");
             }
         }
     }
@@ -541,17 +549,17 @@ public abstract class NewGame extends JFrame {
      * Listener for when a player chooses a symbol for their Jack
      */
     class ChooseJackListener implements ActionListener {
-        ChooseJack csf;
-        int x;
-        public ChooseJackListener(int x, ChooseJack csf) {
+        ChooseJack cjd; //ChooseJack JDialog
+        int x; //symbol (- 1)
+        public ChooseJackListener(int x, ChooseJack cjd) {
             this.x = x;
-            this.csf = csf;
+            this.cjd = cjd;
         }
         @Override
         public void actionPerformed(ActionEvent ae) {
             discard = new Card(11, (x + 1));
             discardPileButton.setIcon(getImg(discard.getName(), false, 180, 270));
-            csf.dispose();
+            cjd.dispose();
             nextPlayer();
         }
     }
@@ -567,20 +575,21 @@ public abstract class NewGame extends JFrame {
             setSize(new Dimension(330, 125));
             setResizable(false);
             getContentPane().setBackground(lightBlue);
-            JPanel csPanel = new JPanel(new GridLayout(1, 4, 10 ,10));
-            csPanel.setBackground(lightBlue);
+            JPanel csjPanel = new JPanel(new GridLayout(1, 4, 10 ,10));
+            csjPanel.setBackground(lightBlue);
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
-            add(csPanel, gbc);
+            add(csjPanel, gbc);
             JButton[] jacks = new JButton[4];
             for (int x = 0; x < 4; x++) {
                 jacks[x] = new JButton();
                 jacks[x].setPreferredSize(new Dimension(70, 105));
                 jacks[x].setBackground(lightBlue);
                 jacks[x].setIcon(getImg("11_" + (x + 1), false, 70, 105));
-                csPanel.add(jacks[x]);
+                csjPanel.add(jacks[x]);
                 jacks[x].addActionListener(new ChooseJackListener(x, this));
             }
+            //when attempted to close window via [X], it reappears (so you can't simply close and ignore)
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent we) {
@@ -590,18 +599,20 @@ public abstract class NewGame extends JFrame {
             setLocationRelativeTo(null);
             setVisible(true);
             pack();
-            //
+            //in Singleplayer, so that user actually sees the JDialog for 0.5 seconds when it's the CPU's turn
             if (singlePlayer && currentPlayer != 0) {
                 AtomicBoolean doJackTimer = new AtomicBoolean(true);
                 new Timer(500, (ActionEvent e) -> {
                     if (doJackTimer.get()) {
                         doJackTimer.set(false);
                         int[] whatSymbol = new int[4];
+                        //basically a hashmap disguised as an array, to count all symbols in CPU's hands
                         for (Card c : players[currentPlayer].getCards()) {
                             whatSymbol[c.getSymbol() - 1]++;
                         }
                         int max = 0;
                         int thisSymbol = 0;
+                        //determines the most common symbol, so that the CPU actually chooses a color that helps
                         for (int x = 0; x < 4; x++) {
                             if (whatSymbol[x] > max) {
                                 max = whatSymbol[x];
