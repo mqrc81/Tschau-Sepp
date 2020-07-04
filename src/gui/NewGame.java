@@ -12,8 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * main "Game Table" window, where all cards and players are displayed and interact
  *
- * @author: Marc Schmidt
- * @since: 2020-05-14
+ * @author Marc Schmidt
+ * @since 2020-05-14
+ * @version 1.3
  */
 public abstract class NewGame extends JFrame {
     protected final Card[] cards = new Card[104];
@@ -171,7 +172,6 @@ public abstract class NewGame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                System.out.println("Window closed");
                 new Menu();
                 we.getWindow().dispose();
             }
@@ -505,8 +505,6 @@ public abstract class NewGame extends JFrame {
                             seven += 2;
                         }
                         nextPlayer();
-                    } else {
-                        System.out.println("Error: Invalid Card");
                     }
                 }
             } else {
@@ -530,7 +528,6 @@ public abstract class NewGame extends JFrame {
                 players[currentPlayer].addCard(aCard());
                 newButton(currentPlayer);
                 drawPileButton.setIcon(getImg(cards[cardCounter + 1].getName(), true, 90, 135));
-                System.out.println("Card received");
                 //if the newly received card is valid, it's the player's turn once again, else it's the next player's turn
                 if (!validCard(discard.getNumber(), discard.getSymbol())) {
                     updateHand(currentPlayer, !singlePlayer || currentPlayer != 0);
@@ -635,9 +632,7 @@ public abstract class NewGame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             if (tschau) {
                 tschau = false;
-                System.out.println("Spieler " + (lastPlayer + 1) +" says \"Tschau\"");
             } else {
-                System.out.println("Error: Tschau not possible");
             }
         }
     }
@@ -650,14 +645,11 @@ public abstract class NewGame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent ae) {
             if (sepp) {
-                System.out.println("Spieler " + (lastPlayer + 1) +" says \"Sepp\"");
                 if (ace) {
                     sepp = false;
                 } else {
                     new GameOver(players, NewGame.this);
                 }
-            } else {
-                System.out.println("Error: Sepp not possible");
             }
         }
     }

@@ -5,10 +5,11 @@ import java.util.*;
 import java.util.List;
 
 /**
- * a instance of player, which has a set of cards and corresponding buttons
+ * an instance of player, which has a set of cards and corresponding buttons
  *
- * @author: Marc Schmidt
- * @since: 2020-05-14
+ * @author Marc Schmidt
+ * @since 2020-05-14
+ * @version 1.3
  */
 public class Player {
 

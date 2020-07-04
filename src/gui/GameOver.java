@@ -9,8 +9,9 @@ import java.awt.event.*;
 /**
  * "Game Over" window after a player won the game
  *
- * @author: Marc Schmidt
- * @since: 2020-05-29
+ * @author Marc Schmidt
+ * @since 2020-05-29
+ * @version 1.3
  */
 public class GameOver extends JFrame {
 
@@ -87,7 +88,6 @@ public class GameOver extends JFrame {
         menuButton.setFocusable(false);
         menuButton.addMouseListener(new HoverListener());
         menuButton.addActionListener(ae -> {
-            System.out.println("Returned to Menu");
             new Menu();
             dispose();
         });
@@ -97,7 +97,6 @@ public class GameOver extends JFrame {
 
         blinkTimer. start();
 
-        //Basics:
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);

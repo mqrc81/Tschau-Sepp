@@ -7,8 +7,9 @@ import java.awt.event.*;
 /**
  * "Menu" window, in which the user can start a new game
  *
- * @author: Marc Schmidt
- * @since: 2020-05-14
+ * @author Marc Schmidt
+ * @since 2020-05-14
+ * @version 1.3
  */
 public class Menu extends JFrame {
 
@@ -61,7 +62,6 @@ public class Menu extends JFrame {
         singleplayerButton.setFocusable(false);
         singleplayerButton.addMouseListener(new HoverListener());
         singleplayerButton.addActionListener(ae -> {
-            System.out.println("Singleplayer Game started");
             new Singleplayer();
             dispose();
         });
@@ -75,7 +75,6 @@ public class Menu extends JFrame {
         multiplayerButton.setFocusable(false);
         multiplayerButton.addMouseListener(new HoverListener());
         multiplayerButton.addActionListener(ae -> {
-            System.out.println("Multiplayer Game started");
             new Multiplayer();
             dispose();
         });

@@ -6,8 +6,9 @@ import java.awt.event.*;
 /**
  * main "Game Table" window, specifically for "Singleplayer" gamemode
  *
- * @author: Marc Schmidt
- * @since: 2020-05-14
+ * @author Marc Schmidt
+ * @since 2020-05-14
+ * @version 1.3
  */
 public class Singleplayer extends NewGame {
 
@@ -20,7 +21,6 @@ public class Singleplayer extends NewGame {
     public Singleplayer() {
         setTitle("Singleplayer | Tschau Sepp Premium");
         playerLabel[currentPlayer].setBackground(green);
-        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
 
     /**
@@ -81,7 +81,6 @@ public class Singleplayer extends NewGame {
      * evaluates, what the CPU's next move (play/draw card) will be
      */
     public void doAlgorithm() {
-        System.out.println("Doing algorithm");
         //if CPU has no valid card to play
         if (!validCard(discard.getNumber(), discard.getSymbol())) {
             toClick = -1;

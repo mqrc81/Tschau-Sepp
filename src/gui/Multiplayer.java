@@ -3,8 +3,9 @@ package gui;
 /**
  * main "Game Table" window, specifically for "Multiplayer" gamemode
  *
- * @author: Marc Schmidt
- * @since: 2020-05-14
+ * @author Marc Schmidt
+ * @since 2020-05-14
+ * @version 1.3
  */
 public class Multiplayer extends NewGame {
 
@@ -14,7 +15,6 @@ public class Multiplayer extends NewGame {
     public Multiplayer() {
         setTitle("Multiplayer | Tschau Sepp Premium");
         playerLabel[currentPlayer].setBackground(green);
-        System.out.println("Player " + (currentPlayer + 1) + "'s turn");
     }
 
     /**
